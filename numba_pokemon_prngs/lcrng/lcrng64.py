@@ -26,6 +26,10 @@ class LCRNG64:
     def __init__(self, seed: np.uint64) -> None:
         self.seed: np.uint64 = seed
 
+    def re_init(self, seed: np.uint64) -> None:
+        """Reinitialize without creating a new object"""
+        self.seed = seed
+
     def next(self) -> np.uint64:
         """
         Generate and return the next full 64-bit random uint

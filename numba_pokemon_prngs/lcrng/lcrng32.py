@@ -29,6 +29,10 @@ class LCRNG32:
     def __init__(self, seed: np.uint32) -> None:
         self.seed: np.uint32 = seed
 
+    def re_init(self, seed: np.uint32) -> None:
+        """Reinitialize without creating a new object"""
+        self.seed = seed
+
     def next(self) -> np.uint32:
         """
         Generate and return the next full 32-bit random uint
