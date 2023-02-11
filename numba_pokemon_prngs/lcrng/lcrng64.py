@@ -34,6 +34,16 @@ class LCRNG64:
         """
         raise NotImplementedError()
 
+    def jump(self, adv: np.uint64) -> np.uint64:
+        """Jump ahead the LCRNG sequence by adv"""
+        raise NotImplementedError()
+
+    def advance(self, adv: np.uint64) -> np.uint64:
+        """Advance the LCRNG sequence by adv"""
+        for _ in range(adv):
+            self.next()
+        return self.seed
+
     def next_u32(self) -> np.uint32:
         """Generate and return the next 32-bit random uint"""
         return self.next() >> 32
@@ -59,9 +69,28 @@ def lcrng64_init(
         mult = pow(mult, -1, 0x10000000000000000)
         add = (-add * mult) & 0xFFFFFFFFFFFFFFFF
 
+    jump_table = [(add, mult)]
+    for i in range(63):
+        jump_table.append(
+            (
+                (jump_table[i][0] * (jump_table[i][1] + 1)) & 0xFFFFFFFFFFFFFFFF,
+                (jump_table[i][1] * jump_table[i][1]) & 0xFFFFFFFFFFFFFFFF,
+            )
+        )
+    jump_table = tuple(jump_table)
+
     def wrap(lcrng_class: Type[LCRNG64]) -> Type[LCRNG64]:
         def next_(self: LCRNG64) -> np.uint32:
             self.seed = self.seed * mult + add
+            return self.seed
+
+        def jump(self: LCRNG64, adv: np.uint64):
+            i = 0
+            while adv:
+                if adv & 1:
+                    add, mult = jump_table[i]
+                    self.seed = self.seed * mult + add
+                adv >>= 1
             return self.seed
 
         if distribution == LCRNG64RandomDistribution.MULTIPLICATION_SHIFT:
@@ -75,6 +104,7 @@ def lcrng64_init(
                 raise NotImplementedError()
 
         lcrng_class.next = next_
+        lcrng_class.jump = jump
         lcrng_class.next_rand = next_rand
         return lcrng_class
 

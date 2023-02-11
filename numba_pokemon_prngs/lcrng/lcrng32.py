@@ -37,6 +37,16 @@ class LCRNG32:
         """
         raise NotImplementedError()
 
+    def jump(self, adv: np.uint32) -> np.uint32:
+        """Jump ahead the LCRNG sequence by adv"""
+        raise NotImplementedError()
+
+    def advance(self, adv: np.uint32) -> np.uint32:
+        """Advance the LCRNG sequence by adv"""
+        for _ in range(adv):
+            self.next()
+        return self.seed
+
     def next_u16(self) -> np.uint16:
         """Generate and return the next 16-bit random uint"""
         return self.next() >> 16
@@ -62,9 +72,28 @@ def lcrng32_init(
         mult = pow(mult, -1, 0x100000000)
         add = (-add * mult) & 0xFFFFFFFF
 
+    jump_table = [(add, mult)]
+    for i in range(31):
+        jump_table.append(
+            (
+                (jump_table[i][0] * (jump_table[i][1] + 1)) & 0xFFFFFFFF,
+                (jump_table[i][1] * jump_table[i][1]) & 0xFFFFFFFF,
+            )
+        )
+    jump_table = tuple(jump_table)
+
     def wrap(lcrng_class: Type[LCRNG32]) -> Type[LCRNG32]:
         def next_(self: LCRNG32) -> np.uint32:
             self.seed = self.seed * mult + add
+            return self.seed
+
+        def jump(self: LCRNG32, adv: np.uint32):
+            i = 0
+            while adv:
+                if adv & 1:
+                    add, mult = jump_table[i]
+                    self.seed = self.seed * mult + add
+                adv >>= 1
             return self.seed
 
         if distribution == LCRNG32RandomDistribution.MODULO:
@@ -83,6 +112,7 @@ def lcrng32_init(
                 raise NotImplementedError()
 
         lcrng_class.next = next_
+        lcrng_class.jump = jump
         lcrng_class.next_rand = next_rand
         return lcrng_class
 
