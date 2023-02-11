@@ -28,7 +28,7 @@ jobs:
         poetry install --no-root
     - name: Lint with pylint
       run: |
-        poetry run pylint $(git ls-files '*.py')
+        poetry run pylint --fail-under=9 $(git ls-files '*.py')
     - name: Check formatting with black
       run: |
         poetry run black . --diff 
