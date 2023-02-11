@@ -117,6 +117,7 @@ def lcrng32_init(
         lcrng_class.next_rand = next_rand
 
         lcrng_class = numba.experimental.jitclass(lcrng_class)
+        
         return lcrng_class
 
     return wrap
