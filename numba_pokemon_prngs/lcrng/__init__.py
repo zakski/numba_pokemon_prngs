@@ -52,7 +52,6 @@ class PokeRNGRDiv(LCRNG32):
 @lcrng32_init(
     add=0x1,
     mult=0x6C078965,
-    distribution=LCRNG32RandomDistribution.MODULO,
 )
 class ARNG(LCRNG32):
     """Alternative Pokemon LCRNG with modulo random distribution"""
@@ -61,7 +60,6 @@ class ARNG(LCRNG32):
 @lcrng32_init(
     add=0x1,
     mult=0x6C078965,
-    distribution=LCRNG32RandomDistribution.MODULO,
     reverse=True,
 )
 class ARNGR(LCRNG32):
