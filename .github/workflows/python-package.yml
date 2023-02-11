@@ -24,14 +24,14 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install pylint pytest poetry black
+        python -m pip install poetry
         poetry install --no-root
     - name: Lint with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        poetry run pylint $(git ls-files '*.py')
     - name: Check formatting with black
       run: |
-        black . --diff 
+        poetry run black . --diff 
     - name: Test with pytest
       run: |
-        pytest
+        poetry run pytest
