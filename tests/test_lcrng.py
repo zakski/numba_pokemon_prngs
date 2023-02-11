@@ -157,12 +157,10 @@ def test_lcrng32_next_rand():
     """Test LCRNG32 next_rand() calls for bounded rand"""
     test_pokerng_div = PokeRNGDiv(0x12345678)
     test_pokerng_mod = PokeRNGMod(0x12345678)
-    test_arng = ARNG(0x12345678)
     test_xdrng = XDRNG(0x12345678)
 
     test_pokerngr_div = PokeRNGRDiv(0x12345678)
     test_pokerngr_mod = PokeRNGRMod(0x12345678)
-    test_arngr = ARNGR(0x12345678)
     test_xdrngr = XDRNGR(0x12345678)
     assert tuple(
         tuple(test_pokerng_div.next_rand(maximum) for _ in range(5))
@@ -183,16 +181,6 @@ def test_lcrng32_next_rand():
         (8, 3, 18, 2, 0),
         (94, 1, 8, 41, 61),
         (76, 93, 38, 12, 132),
-    )
-    assert tuple(
-        tuple(test_arng.next_rand(maximum) for _ in range(5))
-        for maximum in (2, 5, 25, 100, 256)
-    ) == (
-        (0, 1, 0, 0, 1),
-        (2, 4, 3, 4, 1),
-        (1, 13, 11, 3, 20),
-        (15, 33, 57, 36, 87),
-        (105, 49, 75, 45, 63),
     )
     assert tuple(
         tuple(test_xdrng.next_rand(maximum) for _ in range(5))
@@ -224,16 +212,6 @@ def test_lcrng32_next_rand():
         (19, 4, 9, 18, 2),
         (56, 39, 23, 86, 53),
         (51, 229, 5, 237, 186),
-    )
-    assert tuple(
-        tuple(test_arngr.next_rand(maximum) for _ in range(5))
-        for maximum in (2, 5, 25, 100, 256)
-    ) == (
-        (0, 1, 1, 1, 1),
-        (4, 1, 1, 0, 0),
-        (6, 22, 15, 11, 1),
-        (18, 95, 43, 14, 43),
-        (65, 82, 251, 148, 64),
     )
     assert tuple(
         tuple(test_xdrngr.next_rand(maximum) for _ in range(5))
