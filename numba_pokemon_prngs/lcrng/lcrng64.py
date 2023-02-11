@@ -69,12 +69,12 @@ def lcrng64_init(
         mult = pow(mult, -1, 0x10000000000000000)
         add = (-add * mult) & 0xFFFFFFFFFFFFFFFF
 
-    jump_table = [(add, mult)]
+    jump_table = [(np.uint64(add), np.uint64(mult))]
     for i in range(63):
         jump_table.append(
             (
-                (jump_table[i][0] * (jump_table[i][1] + 1)) & 0xFFFFFFFFFFFFFFFF,
-                (jump_table[i][1] * jump_table[i][1]) & 0xFFFFFFFFFFFFFFFF,
+                np.uint64(jump_table[i][0] * (jump_table[i][1] + 1)),
+                np.uint64(jump_table[i][1] * jump_table[i][1]),
             )
         )
     jump_table = tuple(jump_table)
@@ -91,6 +91,7 @@ def lcrng64_init(
                     add, mult = jump_table[i]
                     self.seed = self.seed * mult + add
                 adv >>= 1
+                i += 1
             return self.seed
 
         if distribution == LCRNG64RandomDistribution.MULTIPLICATION_SHIFT:
@@ -106,6 +107,8 @@ def lcrng64_init(
         lcrng_class.next = next_
         lcrng_class.jump = jump
         lcrng_class.next_rand = next_rand
+
+        lcrng_class = numba.experimental.jitclass(lcrng_class)
         return lcrng_class
 
     return wrap

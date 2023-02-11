@@ -1,5 +1,4 @@
 """Linear Congruential Pseudo Random Number Generators"""
-import numba
 from .lcrng32 import (
     LCRNG32,
     LCRNG32RandomDistribution,
@@ -14,7 +13,6 @@ from .lcrng64 import (
 # pylint: disable=abstract-method
 
 
-@numba.experimental.jitclass()
 @lcrng32_init(
     add=0x6073, mult=0x41C64E6D, distribution=LCRNG32RandomDistribution.MODULO
 )
@@ -22,7 +20,6 @@ class PokeRNGMod(LCRNG32):
     """Standard Pokemon LCRNG with modulo random distribution"""
 
 
-@numba.experimental.jitclass()
 @lcrng32_init(
     add=0x6073,
     mult=0x41C64E6D,
@@ -32,7 +29,6 @@ class PokeRNGDiv(LCRNG32):
     """Standard Pokemon LCRNG with reciprocal division random distribution"""
 
 
-@numba.experimental.jitclass()
 @lcrng32_init(
     add=0x6073,
     mult=0x41C64E6D,
@@ -43,7 +39,6 @@ class PokeRNGRMod(LCRNG32):
     """Reversed Standard Pokemon LCRNG with modulo random distribution"""
 
 
-@numba.experimental.jitclass()
 @lcrng32_init(
     add=0x6073,
     mult=0x41C64E6D,
@@ -54,7 +49,6 @@ class PokeRNGRDiv(LCRNG32):
     """Reversed Standard Pokemon LCRNG with reciprocal division random distribution"""
 
 
-@numba.experimental.jitclass()
 @lcrng32_init(
     add=0x1,
     mult=0x6C078965,
@@ -64,7 +58,6 @@ class ARNG(LCRNG32):
     """Alternative Pokemon LCRNG with modulo random distribution"""
 
 
-@numba.experimental.jitclass()
 @lcrng32_init(
     add=0x1,
     mult=0x6C078965,
@@ -75,7 +68,6 @@ class ARNGR(LCRNG32):
     """Reversed Alternative Pokemon LCRNG with modulo random distribution"""
 
 
-@numba.experimental.jitclass()
 @lcrng32_init(
     add=0x269EC3,
     mult=0x343FD,
@@ -85,7 +77,6 @@ class XDRNG(LCRNG32):
     """Pokemon Colosseum/XD/Channel LCRNG with modulo random distribution"""
 
 
-@numba.experimental.jitclass()
 @lcrng32_init(
     add=0x269EC3,
     mult=0x343FD,
@@ -96,7 +87,6 @@ class XDRNGR(LCRNG32):
     """Reversed Pokemon Colosseum/XD/Channel LCRNG with modulo random distribution"""
 
 
-@numba.experimental.jitclass()
 @lcrng64_init(
     add=0x269EC3,
     mult=0x5D588B656C078965,
@@ -106,7 +96,6 @@ class BWRNG(LCRNG64):
     """Pokemon Gen 5 LCRNG with multiplication-shift random distribution"""
 
 
-@numba.experimental.jitclass()
 @lcrng64_init(
     add=0x269EC3,
     mult=0x5D588B656C078965,

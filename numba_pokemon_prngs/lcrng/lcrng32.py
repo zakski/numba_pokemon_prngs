@@ -72,12 +72,12 @@ def lcrng32_init(
         mult = pow(mult, -1, 0x100000000)
         add = (-add * mult) & 0xFFFFFFFF
 
-    jump_table = [(add, mult)]
+    jump_table = [(np.uint32(add), np.uint32(mult))]
     for i in range(31):
         jump_table.append(
             (
-                (jump_table[i][0] * (jump_table[i][1] + 1)) & 0xFFFFFFFF,
-                (jump_table[i][1] * jump_table[i][1]) & 0xFFFFFFFF,
+                np.uint32(jump_table[i][0] * (jump_table[i][1] + 1)),
+                np.uint32(jump_table[i][1] * jump_table[i][1]),
             )
         )
     jump_table = tuple(jump_table)
@@ -94,6 +94,7 @@ def lcrng32_init(
                     add, mult = jump_table[i]
                     self.seed = self.seed * mult + add
                 adv >>= 1
+                i += 1
             return self.seed
 
         if distribution == LCRNG32RandomDistribution.MODULO:
@@ -114,6 +115,8 @@ def lcrng32_init(
         lcrng_class.next = next_
         lcrng_class.jump = jump
         lcrng_class.next_rand = next_rand
+
+        lcrng_class = numba.experimental.jitclass(lcrng_class)
         return lcrng_class
 
     return wrap
