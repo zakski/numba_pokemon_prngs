@@ -500,7 +500,7 @@ def test_lcrng64_next():
     )
 
 
-def test_lcrng64_next_u16():
+def test_lcrng64_next_u32():
     """Test LCRNG64 next_u32() calls for 64-bit rand"""
     test_bwrng = BWRNG(0x1234567887654321)
     test_bwrngr = BWRNGR(0x1234567887654321)

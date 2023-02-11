@@ -45,11 +45,11 @@ class LCRNG32:
         """Advance the LCRNG sequence by adv"""
         for _ in range(adv):
             self.next()
-        return self.seed
+        return np.uint32(self.seed)
 
     def next_u16(self) -> np.uint16:
         """Generate and return the next 16-bit random uint"""
-        return self.next() >> 16
+        return np.uint16(np.uint32(self.next()) >> np.uint32(16))
 
     def next_rand(self, maximum: np.uint16) -> np.uint16:
         """
@@ -69,8 +69,11 @@ def lcrng32_init(
 ) -> Callable[[Type[LCRNG32]], Type[LCRNG32]]:
     """Initialize a LCRNG32 class with constants and random distribution"""
     if reverse:
-        mult = pow(mult, -1, 0x100000000)
-        add = (-add * mult) & 0xFFFFFFFF
+        mult = np.uint32(pow(mult, -1, 0x100000000))
+        add = np.uint32(-np.uint32(add) * mult)
+    else:
+        mult = np.uint32(mult)
+        add = np.uint32(add)
 
     jump_table = [(np.uint32(add), np.uint32(mult))]
     for i in range(31):
@@ -84,28 +87,34 @@ def lcrng32_init(
 
     def wrap(lcrng_class: Type[LCRNG32]) -> Type[LCRNG32]:
         def next_(self: LCRNG32) -> np.uint32:
-            self.seed = self.seed * mult + add
-            return self.seed
+            self.seed = np.uint32(
+                np.uint32(self.seed) * np.uint32(mult) + np.uint32(add)
+            )
+            return np.uint32(self.seed)
 
         def jump(self: LCRNG32, adv: np.uint32):
             i = 0
             while adv:
                 if adv & 1:
                     add, mult = jump_table[i]
-                    self.seed = self.seed * mult + add
+                    self.seed = np.uint32(
+                        np.uint32(self.seed) * np.uint32(mult) + np.uint32(add)
+                    )
                 adv >>= 1
                 i += 1
-            return self.seed
+            return np.uint32(self.seed)
 
         if distribution == LCRNG32RandomDistribution.MODULO:
 
             def next_rand(self: LCRNG32, maximum: np.uint16) -> np.uint16:
-                return self.next_u16() % maximum
+                return np.uint16(self.next_u16()) % np.uint16(maximum)
 
         elif distribution == LCRNG32RandomDistribution.RECIPROCAL_DIVISION:
 
             def next_rand(self: LCRNG32, maximum: np.uint16) -> np.uint16:
-                return self.next_u16() // ((0xFFFF // maximum) + 1)
+                return np.uint16(self.next_u16()) // np.uint16(
+                    (np.uint16(0xFFFF) // np.uint16(maximum)) + np.uint16(1)
+                )
 
         else:
 

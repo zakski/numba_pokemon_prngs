@@ -42,11 +42,11 @@ class LCRNG64:
         """Advance the LCRNG sequence by adv"""
         for _ in range(adv):
             self.next()
-        return self.seed
+        return np.uint64(self.seed)
 
     def next_u32(self) -> np.uint32:
         """Generate and return the next 32-bit random uint"""
-        return self.next() >> 32
+        return np.uint32(np.uint64(self.next()) >> np.uint64(32))
 
     def next_rand(self, maximum: np.uint32) -> np.uint32:
         """
@@ -66,8 +66,11 @@ def lcrng64_init(
 ) -> Callable[[Type[LCRNG64]], Type[LCRNG64]]:
     """Initialize a LCRNG64 class with constants and random distribution"""
     if reverse:
-        mult = pow(mult, -1, 0x10000000000000000)
-        add = (-add * mult) & 0xFFFFFFFFFFFFFFFF
+        mult = np.uint64(pow(mult, -1, 0x10000000000000000))
+        add = np.uint64(-np.uint64(add) * mult)
+    else:
+        mult = np.uint64(mult)
+        add = np.uint64(add)
 
     jump_table = [(np.uint64(add), np.uint64(mult))]
     for i in range(63):
@@ -81,23 +84,29 @@ def lcrng64_init(
 
     def wrap(lcrng_class: Type[LCRNG64]) -> Type[LCRNG64]:
         def next_(self: LCRNG64) -> np.uint32:
-            self.seed = self.seed * mult + add
-            return self.seed
+            self.seed = np.uint64(
+                np.uint64(self.seed) * np.uint64(mult) + np.uint64(add)
+            )
+            return np.uint64(self.seed)
 
         def jump(self: LCRNG64, adv: np.uint64):
             i = 0
             while adv:
                 if adv & 1:
                     add, mult = jump_table[i]
-                    self.seed = self.seed * mult + add
+                    self.seed = np.uint64(
+                        np.uint64(self.seed) * np.uint64(mult) + np.uint64(add)
+                    )
                 adv >>= 1
                 i += 1
-            return self.seed
+            return np.uint64(self.seed)
 
         if distribution == LCRNG64RandomDistribution.MULTIPLICATION_SHIFT:
 
             def next_rand(self: LCRNG64, maximum: np.uint32) -> np.uint32:
-                return (self.next_u32() * maximum) >> 32
+                return np.uint32(
+                    (np.uint64(self.next_u32()) * np.uint64(maximum)) >> np.uint64(32)
+                )
 
         else:
 
