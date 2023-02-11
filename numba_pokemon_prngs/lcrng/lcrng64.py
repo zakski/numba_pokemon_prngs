@@ -56,6 +56,16 @@ class LCRNG64:
         """
         raise NotImplementedError()
 
+    @staticmethod
+    def const_jump(adv: np.uint64, **kwargs) -> Callable[[LCRNG64]]:
+        """Compile @njit jump function with a const adv"""
+        raise NotImplementedError()
+
+    @staticmethod
+    def const_rand(maximum: np.uint32, **kwargs) -> Callable[[LCRNG64], np.uint32]:
+        """Compile @njit rand function with a const maximum"""
+        raise NotImplementedError()
+
 
 def lcrng64_init(
     *,
@@ -104,6 +114,27 @@ def lcrng64_init(
                 i += 1
             return np.uint64(self.seed)
 
+        def const_jump(adv: np.uint32, **kwargs) -> Callable[[LCRNG64]]:
+            i = 0
+            mult = np.uint64(1)
+            add = np.uint64(0)
+            while adv:
+                add_val, mult_val = jump_table[i]
+                if adv & 1:
+                    mult *= mult_val
+                    add = add * mult_val + add_val
+                adv >>= 1
+                i += 1
+
+            @numba.njit(**kwargs)
+            def jump_func(self: LCRNG64):
+                self.seed = np.uint64(
+                    np.uint64(self.seed) * np.uint64(mult) + np.uint64(add)
+                )
+                return np.uint64(self.seed)
+
+            return jump_func
+
         if distribution == LCRNG64RandomDistribution.MULTIPLICATION_SHIFT:
 
             def next_rand(self: LCRNG64, maximum: np.uint32) -> np.uint32:
@@ -111,9 +142,26 @@ def lcrng64_init(
                     (np.uint64(self.next_u32()) * np.uint64(maximum)) >> np.uint64(32)
                 )
 
+            def const_rand(
+                maximum: np.uint32, **kwargs
+            ) -> Callable[[LCRNG64], np.uint32]:
+                @numba.njit(**kwargs)
+                def rand_func(self: LCRNG64) -> np.uint32:
+                    return np.uint32(
+                        (np.uint64(self.next_u32()) * np.uint64(maximum))
+                        >> np.uint64(32)
+                    )
+
+                return rand_func
+
         else:
 
             def next_rand(self: LCRNG64, maximum: np.uint32) -> np.uint32:
+                raise NotImplementedError()
+
+            def const_rand(
+                maximum: np.uint32, **kwargs
+            ) -> Callable[[LCRNG64], np.uint32]:
                 raise NotImplementedError()
 
         lcrng_class.next = next_
@@ -121,6 +169,10 @@ def lcrng64_init(
         lcrng_class.next_rand = next_rand
 
         lcrng_class = numba.experimental.jitclass(lcrng_class)
+
+        lcrng_class.const_jump = const_jump
+        lcrng_class.const_rand = const_rand
+
         return lcrng_class
 
     return wrap
