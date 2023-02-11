@@ -79,8 +79,11 @@ def lcrng32_init(
     for i in range(31):
         jump_table.append(
             (
-                np.uint32(jump_table[i][0] * (jump_table[i][1] + 1)),
-                np.uint32(jump_table[i][1] * jump_table[i][1]),
+                np.uint32(
+                    np.uint32(jump_table[i][0])
+                    * np.uint32(np.uint32(jump_table[i][1]) + np.uint32(1))
+                ),
+                np.uint32(np.uint32(jump_table[i][1]) * np.uint32(jump_table[i][1])),
             )
         )
     jump_table = tuple(jump_table)

@@ -76,8 +76,11 @@ def lcrng64_init(
     for i in range(63):
         jump_table.append(
             (
-                np.uint64(jump_table[i][0] * (jump_table[i][1] + 1)),
-                np.uint64(jump_table[i][1] * jump_table[i][1]),
+                np.uint64(
+                    np.uint64(jump_table[i][0])
+                    * np.uint64(np.uint64(jump_table[i][1]) + np.uint64(1))
+                ),
+                np.uint64(np.uint64(jump_table[i][1]) * np.uint64(jump_table[i][1])),
             )
         )
     jump_table = tuple(jump_table)
