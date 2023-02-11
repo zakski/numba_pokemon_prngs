@@ -1,4 +1,7 @@
 """Tests for LCRNG classes"""
+import numpy as np
+
+np.seterr(over="ignore")
 from numba_pokemon_prngs.lcrng import (
     PokeRNGDiv,
     PokeRNGMod,
