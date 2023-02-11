@@ -55,8 +55,12 @@ def lcrng32_init(
     add: np.uint32,
     mult: np.uint32,
     distribution: LCRNG32RandomDistribution = LCRNG32RandomDistribution.NONE,
+    reverse: bool = False,
 ) -> Callable[[Type[LCRNG32]], Type[LCRNG32]]:
     """Initialize a LCRNG32 class with constants and random distribution"""
+    if reverse:
+        mult = pow(mult, -1, 0x100000000)
+        add = (-add * mult) & 0xFFFFFFFF
 
     def wrap(lcrng_class: Type[LCRNG32]) -> Type[LCRNG32]:
         def next_(self: LCRNG32) -> np.uint32:

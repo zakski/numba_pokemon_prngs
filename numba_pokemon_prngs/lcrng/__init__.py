@@ -27,4 +27,26 @@ class PokeRNGDiv(LCRNG32):
     """Standard Pokemon LCRNG with reciprocal division random distribution"""
 
 
+@numba.experimental.jitclass()
+@lcrng32_init(
+    add=0x6073,
+    mult=0x41C64E6D,
+    distribution=LCRNG32RandomDistribution.MODULO,
+    reverse=True,
+)
+class PokeRNGRMod(LCRNG32):
+    """Reversed Standard Pokemon LCRNG with modulo random distribution"""
+
+
+@numba.experimental.jitclass()
+@lcrng32_init(
+    add=0x6073,
+    mult=0x41C64E6D,
+    distribution=LCRNG32RandomDistribution.RECIPROCAL_DIVISION,
+    reverse=True,
+)
+class PokeRNGRDiv(LCRNG32):
+    """Reversed Standard Pokemon LCRNG with reciprocal division random distribution"""
+
+
 # pylint: enable=abstract-method
