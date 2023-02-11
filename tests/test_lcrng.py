@@ -8,11 +8,13 @@ from numba_pokemon_prngs.lcrng import (
     ARNGR,
     XDRNG,
     XDRNGR,
+    BWRNG,
+    BWRNGR,
 )
 
 
-def test_lcrng_next():
-    """Test LCRNG next() calls for full seed"""
+def test_lcrng32_next():
+    """Test LCRNG32 next() calls for full seed"""
     test_pokerng_div = PokeRNGDiv(0x12345678)
     test_pokerng_mod = PokeRNGMod(0x12345678)
     test_arng = ARNG(0x12345678)
@@ -81,8 +83,8 @@ def test_lcrng_next():
     )
 
 
-def test_lcrng_next_u16():
-    """Test LCRNG next_u16() calls for 16-bit rand"""
+def test_lcrng32_next_u16():
+    """Test LCRNG32 next_u16() calls for 16-bit rand"""
     test_pokerng_div = PokeRNGDiv(0x12345678)
     test_pokerng_mod = PokeRNGMod(0x12345678)
     test_arng = ARNG(0x12345678)
@@ -151,8 +153,8 @@ def test_lcrng_next_u16():
     )
 
 
-def test_lcrng_next_rand():
-    """Test LCRNG next_rand() calls for constrained rand"""
+def test_lcrng32_next_rand():
+    """Test LCRNG32 next_rand() calls for bounded rand"""
     test_pokerng_div = PokeRNGDiv(0x12345678)
     test_pokerng_mod = PokeRNGMod(0x12345678)
     test_arng = ARNG(0x12345678)
@@ -242,4 +244,72 @@ def test_lcrng_next_rand():
         (19, 3, 21, 8, 23),
         (14, 84, 97, 77, 67),
         (253, 125, 122, 133, 99),
+    )
+
+
+def test_lcrng64_next():
+    """Test LCRNG64 next() calls for full seed"""
+    test_bwrng = BWRNG(0x1234567887654321)
+    test_bwrngr = BWRNGR(0x1234567887654321)
+
+    assert tuple(test_bwrng.next() for _ in range(5)) == (
+        16002821226169746376,
+        2040015457476601003,
+        2028497181719615802,
+        16094432643137068197,
+        16420378533051693276,
+    )
+    assert tuple(test_bwrngr.next() for _ in range(5)) == (
+        2641392895229885446,
+        6370139599609869703,
+        9218825391134224756,
+        13553550761165321565,
+        11857309827725451154,
+    )
+
+
+def test_lcrng64_next_u16():
+    """Test LCRNG64 next_u32() calls for 64-bit rand"""
+    test_bwrng = BWRNG(0x1234567887654321)
+    test_bwrngr = BWRNGR(0x1234567887654321)
+
+    assert tuple(test_bwrng.next_u32() for _ in range(5)) == (
+        3725947166,
+        474978112,
+        472296304,
+        3747277111,
+        3823167302,
+    )
+    assert tuple(test_bwrngr.next_u32() for _ in range(5)) == (
+        614997207,
+        1483163703,
+        2146425049,
+        3155681947,
+        2760745079,
+    )
+
+
+def test_lcrng64_next_rand():
+    """Test LCRNG64 next_rand() calls for bounded rand"""
+    test_bwrng = BWRNG(0x1234567887654321)
+    test_bwrngr = BWRNGR(0x1234567887654321)
+    assert tuple(
+        tuple(test_bwrng.next_rand(maximum) for _ in range(5))
+        for maximum in (2, 5, 25, 100, 256)
+    ) == (
+        (1, 0, 0, 1, 1),
+        (1, 1, 1, 0, 3),
+        (10, 3, 8, 24, 23),
+        (67, 16, 63, 83, 84),
+        (123, 158, 75, 92, 208),
+    )
+    assert tuple(
+        tuple(test_bwrngr.next_rand(maximum) for _ in range(5))
+        for maximum in (2, 5, 25, 100, 256)
+    ) == (
+        (0, 0, 0, 1, 1),
+        (2, 2, 1, 3, 4),
+        (7, 18, 21, 16, 19),
+        (63, 70, 17, 58, 55),
+        (77, 72, 230, 10, 131),
     )

@@ -5,6 +5,11 @@ from .lcrng32 import (
     LCRNG32RandomDistribution,
     lcrng32_init,
 )
+from .lcrng64 import (
+    LCRNG64,
+    LCRNG64RandomDistribution,
+    lcrng64_init,
+)
 
 # pylint: disable=abstract-method
 
@@ -89,6 +94,27 @@ class XDRNG(LCRNG32):
 )
 class XDRNGR(LCRNG32):
     """Reversed Pokemon Colosseum/XD/Channel LCRNG with modulo random distribution"""
+
+
+@numba.experimental.jitclass()
+@lcrng64_init(
+    add=0x269EC3,
+    mult=0x5D588B656C078965,
+    distribution=LCRNG64RandomDistribution.MULTIPLICATION_SHIFT,
+)
+class BWRNG(LCRNG64):
+    """Pokemon Gen 5 LCRNG with multiplication-shift random distribution"""
+
+
+@numba.experimental.jitclass()
+@lcrng64_init(
+    add=0x269EC3,
+    mult=0x5D588B656C078965,
+    distribution=LCRNG64RandomDistribution.MULTIPLICATION_SHIFT,
+    reverse=True,
+)
+class BWRNGR(LCRNG64):
+    """Reversed Pokemon Gen 5 LCRNG with multiplication-shift random distribution"""
 
 
 # pylint: enable=abstract-method
