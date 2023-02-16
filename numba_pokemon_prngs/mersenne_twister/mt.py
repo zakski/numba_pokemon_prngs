@@ -9,6 +9,7 @@ MAG02 = (np.uint32(0), np.uint32(0x9908B0DF))
 
 # TODO: jump tables
 # TODO: staticmethod const functions
+# TODO: init_by_array
 @numba.experimental.jitclass
 class MersenneTwister:
     """Mersenne Twister Pseudo Random Number Generator"""
@@ -83,3 +84,8 @@ class MersenneTwister:
     def next_rand_mod(self, maximum: np.uint32) -> np.uint32:
         """Generate and return the next [0, maximum) random uint via modulo distribution"""
         return self.next() % maximum
+
+    @staticmethod
+    def rng_list(rng_object: MersenneTwister, size: int) -> RNGList:
+        """Build RNGList class for MersenneTwister"""
+        raise NotImplementedError()

@@ -160,5 +160,4 @@ cython_debug/
 #.idea/
 
 .python-version
-dev_testing.ipynb
-dev_testing.py
+dev_testing*
