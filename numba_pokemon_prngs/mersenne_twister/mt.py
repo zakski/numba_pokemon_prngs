@@ -1,7 +1,6 @@
 """Mersenne Twister 19937 Pseudo Random Number Generator"""
 
 from __future__ import annotations
-import numba
 import numpy as np
 
 MAG02 = (np.uint32(0), np.uint32(0x9908B0DF))
@@ -10,12 +9,11 @@ MAG02 = (np.uint32(0), np.uint32(0x9908B0DF))
 # TODO: jump tables
 # TODO: staticmethod const functions
 # TODO: init_by_array
-@numba.experimental.jitclass
 class MersenneTwister:
     """Mersenne Twister Pseudo Random Number Generator"""
 
-    state: numba.uint32[::1]  # contiguous array
-    index: numba.uint16
+    state: np.ndarray[np.uint32]  # contiguous array
+    index: np.uint16
 
     def __init__(self, seed: np.uint32) -> None:
         self.state = np.empty(624, dtype=np.uint32)

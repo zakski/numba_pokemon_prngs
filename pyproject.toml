@@ -9,7 +9,6 @@ packages = [{include = "numba_pokemon_prngs"}]
 
 [tool.poetry.dependencies]
 python = ">= 3.9, < 3.11"
-numba = "^0.56.4"
 pylint = "^2.16.1"
 
 [tool.poetry.dev-dependencies]

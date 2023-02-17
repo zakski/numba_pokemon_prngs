@@ -1,7 +1,6 @@
 """SHA1 hash for Gen 5 initial seed generation"""
 
 from __future__ import annotations
-import numba
 import numpy as np
 from .lcrng import BWRNG
 from .enums import Game, Language, DSType
@@ -9,7 +8,6 @@ from .util import change_endian_u32, rotate_left_u32, rotate_right_u32
 
 # "nazos" are game version and language specific constants that happen to be stored next to
 # SHA1 hashed data
-@numba.njit(numba.uint32[:](numba.uint32))
 def compute_nazo_bw(input_nazo: np.uint32) -> np.ndarray[np.uint32, 5]:
     """Compute the "nazo" values for black and white"""
     nazos = np.empty(5, dtype=np.uint32)
@@ -22,7 +20,6 @@ def compute_nazo_bw(input_nazo: np.uint32) -> np.ndarray[np.uint32, 5]:
     return nazos
 
 
-@numba.njit(numba.uint32[:](numba.uint32, numba.uint32, numba.uint32))
 def compute_nazo_bw2(
     input_nazo: np.uint32, input_nazo0: np.uint32, input_nazo1: np.uint32
 ) -> np.ndarray[np.uint32, 5]:
@@ -100,11 +97,6 @@ KOREAN_BLACK2_DSI = compute_nazo_bw2(0x02200770, 0x0209B60C, 0x0203A4D5)
 KOREAN_WHITE2_DSI = compute_nazo_bw2(0x027A57B0, 0x0209B62C, 0x0203A501)
 
 
-@numba.njit(
-    numba.types.Array(numba.uint32, 1, "C", readonly=True)(
-        numba.uint32, numba.uint8, numba.uint8
-    )
-)
 def get_nazo(
     version: Game, language: Language, ds_type: DSType
 ) -> np.ndarray[np.uint32, 5]:
@@ -181,18 +173,6 @@ BCD = np.array(
 )
 
 
-@numba.njit(
-    numba.types.UniTuple(numba.uint32, 2)(
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-    ),
-    locals={"t_val": numba.uint32},
-    inline="always",
-)
 def section1_calc(
     a_val: np.uint32,
     b_val: np.uint32,
@@ -213,18 +193,6 @@ def section1_calc(
     return t_val, b_val
 
 
-@numba.njit(
-    numba.types.UniTuple(numba.uint32, 2)(
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-    ),
-    locals={"t_val": numba.uint32},
-    inline="always",
-)
 def section2_calc(
     a_val: np.uint32,
     b_val: np.uint32,
@@ -232,7 +200,7 @@ def section2_calc(
     d_val: np.uint32,
     e_val: np.uint32,
     input_val: np.uint32,
-) -> tuple[np.uint32, numba.uint32]:
+) -> tuple[np.uint32, np.uint32]:
     """Hash calc for section 2: 20-39"""
     t_val = (
         rotate_left_u32(a_val, 5)
@@ -245,18 +213,6 @@ def section2_calc(
     return t_val, b_val
 
 
-@numba.njit(
-    numba.types.UniTuple(numba.uint32, 2)(
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-    ),
-    locals={"t_val": numba.uint32},
-    inline="always",
-)
 def section3_calc(
     a_val: np.uint32,
     b_val: np.uint32,
@@ -277,18 +233,6 @@ def section3_calc(
     return t_val, b_val
 
 
-@numba.njit(
-    numba.types.UniTuple(numba.uint32, 2)(
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-        numba.uint32,
-    ),
-    locals={"t_val": numba.uint32},
-    inline="always",
-)
 def section4_calc(
     a_val: np.uint32,
     b_val: np.uint32,
@@ -309,11 +253,10 @@ def section4_calc(
     return t_val, b_val
 
 
-@numba.experimental.jitclass
 class SHA1:
     """SHA1 hash for Gen 5 initial seed generation"""
 
-    data: numba.uint32[::1]  # contiguous array
+    data: np.ndarray[np.uint32]
 
     def __init__(
         self,
