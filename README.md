@@ -14,3 +14,9 @@ Package for numba @jitclass implementations of the Pseudo-Random Number Generato
 | Mersenne Twister                    | Secondary PRNG for Gen 4/5 games, primary in Gen 6 | MT19937: <br> init_mult = 0x6C078965 <br> (w,n,m,r) = (32,624,397,31) <br> a = 0x9908B0DF <br> (u, d) = (11,0xFFFFFFFF) <br> (s,b) = (7,0x9D2C5680) <br> (t,c) = (15, 0xEFC60000) <br> l = 18                 |                                                             |
 | SIMD-oriented Fast Mersenne Twister | Primary PRNG for Gen 7                              | SFMT19937: <br> init_mult = 0x6C078965 <br> POS1 = 488 <br> SL1 = 18 <br> SL2 = 8 <br> SR1 = 11 <br> SR2 = 8 <br> MASK = (0xDFFFFFEF,0xDDFECB7F,0xBFFAFFFF,0xBFFFFFF6) <br> PARITY = (0x1,0x0,0x0,0x13C9E684) | Impl is not fully SIMD optimized (yet:tm:)                  |
 | TinyMT                              | Secondary PRNG for Gen 6/7                         | mat1 = 0x8F7011EE <br> mat2 = 0xFC78FF1F <br> tmat = 0x3793FDFF <br> init_mult = 0x6C078965                                                                                                                   |                                                             |
+
+## Additionally Supported Features
+| Name    | Description                                               |
+|---------|-----------------------------------------------------------|
+| RNGList | Cache for PRNG values to avoid expensive reinitialization |
+| SHA-1   | Hash function used for Gen 5 initial seed generation      |
