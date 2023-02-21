@@ -103,7 +103,10 @@ KOREAN_WHITE2 = compute_nazo_bw2(0x02200770, 0x0209B62C, 0x0203A501)
 KOREAN_BLACK2_DSI = compute_nazo_bw2(0x02200770, 0x0209B60C, 0x0203A4D5)
 KOREAN_WHITE2_DSI = compute_nazo_bw2(0x027A57B0, 0x0209B62C, 0x0203A501)
 
-
+# pylint: disable=too-many-return-statements
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-statements
 @numba.njit(
     numba.types.Array(numba.uint32, 1, "C", readonly=True)(
         numba.uint32, numba.uint8, numba.uint8
@@ -179,12 +182,17 @@ def get_nazo(
     return np.zeros(5, dtype=np.uint32)
 
 
+# pylint: enable=too-many-return-statements
+# pylint: enable=too-many-branches
+# pylint: enable=too-many-arguments
+
 BCD = np.array(
     tuple(((i // 10) << 4) | ((i % 10)) for i in range(100)),
     dtype=np.uint32,
 )
 
 
+# pylint: disable=too-many-arguments
 @numba.njit(
     numba.types.UniTuple(numba.uint32, 2)(
         numba.uint32,
@@ -561,3 +569,7 @@ class SHA1:
         )
         data[i] = np.uint32(val)
         return val
+
+
+# pylint: enable=too-many-arguments
+# pylint: enable=too-many-statements
