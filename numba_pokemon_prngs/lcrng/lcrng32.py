@@ -27,11 +27,11 @@ class LCRNG32:
     seed: numba.uint32
 
     def __init__(self, seed: np.uint32) -> None:
-        self.seed: np.uint32 = seed
+        self.seed: np.uint32 = np.uint32(seed)
 
     def re_init(self, seed: np.uint32) -> None:
         """Reinitialize without creating a new object"""
-        self.seed = seed
+        self.seed = np.uint32(seed)
 
     def next(self) -> np.uint32:
         """
@@ -47,6 +47,7 @@ class LCRNG32:
 
     def advance(self, adv: np.uint32) -> np.uint32:
         """Advance the LCRNG sequence by adv"""
+        adv = np.uint32(adv)
         for _ in range(adv):
             self.next()
         return np.uint32(self.seed)

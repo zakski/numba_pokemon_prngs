@@ -14,11 +14,13 @@ class TinyMersenneTwister:
     state: numba.uint32[::1]  # contiguous array
 
     def __init__(self, seed: np.uint32) -> None:
+        seed = np.uint32(seed)
         self.state = np.empty(4, dtype=np.uint32)
         self.re_init(seed)
 
     def re_init(self, seed: np.uint32) -> None:
         """Reinitialize without creating a new object"""
+        seed = np.uint32(seed)
         self.state[0] = seed
         self.state[1] = 0x8F7011EE
         self.state[2] = 0xFC78FF1F

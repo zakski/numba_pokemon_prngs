@@ -71,6 +71,7 @@ def build_rnglist(
 
         def advance_states(self, adv: np.uint32) -> None:
             """Advance the state of the RNGList by adv"""
+            adv = np.uint32(adv)
             for _ in range(adv):
                 self.advance_state()
 
@@ -83,6 +84,7 @@ def build_rnglist(
 
         def advance(self, adv: np.uint32) -> None:
             """Advance within the state by adv"""
+            adv = np.uint32(adv)
             self.pointer = (self.pointer + adv) & (size - 1)
 
         def get_value(self):

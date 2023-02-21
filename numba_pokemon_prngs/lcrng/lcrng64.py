@@ -24,11 +24,11 @@ class LCRNG64:
     seed: numba.uint64
 
     def __init__(self, seed: np.uint64) -> None:
-        self.seed: np.uint64 = seed
+        self.seed: np.uint64 = np.uint64(seed)
 
     def re_init(self, seed: np.uint64) -> None:
         """Reinitialize without creating a new object"""
-        self.seed = seed
+        self.seed = np.uint64(seed)
 
     def next(self) -> np.uint64:
         """
@@ -44,6 +44,7 @@ class LCRNG64:
 
     def advance(self, adv: np.uint64) -> np.uint64:
         """Advance the LCRNG sequence by adv"""
+        adv = np.uint64(adv)
         for _ in range(adv):
             self.next()
         return np.uint64(self.seed)

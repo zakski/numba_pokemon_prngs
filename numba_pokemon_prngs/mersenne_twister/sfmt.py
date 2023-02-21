@@ -15,12 +15,14 @@ class SIMDFastMersenneTwister:
     index: numba.uint16
 
     def __init__(self, seed: np.uint32) -> None:
+        seed = np.uint32(seed)
         self.state = np.empty(624, dtype=np.uint32)
         self.index = np.uint16(624)  # ensures shuffle after initialization
         self.re_init(seed)
 
     def re_init(self, seed: np.uint32) -> None:
         """Reinitialize without creating a new object"""
+        seed = np.uint32(seed)
         self.state[0] = seed
         self.index = np.uint16(624)  # ensures shuffle after initialization
         inner = np.uint32(seed & np.uint32(1))
@@ -42,6 +44,7 @@ class SIMDFastMersenneTwister:
 
     def advance(self, adv: np.uint32) -> None:
         """Advance SIMD-oriented Fast Mersenne Twister sequence by adv"""
+        adv = np.uint32(adv)
         adv = (adv * np.uint32(2)) + np.uint32(self.index)
         while adv >= np.uint32(624):
             self.shuffle()
@@ -174,4 +177,4 @@ class SIMDFastMersenneTwister:
 
     def next_rand(self, maximum: np.uint64) -> np.uint64:
         """Generate and return the next [0, maximum) random uint via modulo distribution"""
-        return self.next() % maximum
+        return self.next() % np.uint64(maximum)
