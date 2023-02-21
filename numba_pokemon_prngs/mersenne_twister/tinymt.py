@@ -87,4 +87,4 @@ class TinyMersenneTwister:
 
     def next_rand_mod(self, maximum: np.uint32) -> np.uint32:
         """Generate and return the next [0, maximum) random uint via modulo distribution"""
-        return self.next() % maximum
+        return self.next() % np.uint32(maximum)
