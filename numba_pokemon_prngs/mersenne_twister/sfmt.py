@@ -1,18 +1,18 @@
 """SIMD-oriented Fast Mersenne Twister 19937 Pseudo Random Number Generator"""
 
 from __future__ import annotations
-import numba
 import numpy as np
+from ..compilation import optional_jitclass, array_type
 
 
 # TODO: jump tables
 # TODO: staticmethod const functions
-@numba.experimental.jitclass
+@optional_jitclass
 class SIMDFastMersenneTwister:
     """SIMD-oriented Fast Mersenne Twister Pseudo Random Number Generator"""
 
-    state: numba.uint32[::1]  # contiguous array
-    index: numba.uint16
+    state: array_type(np.uint32)  # contiguous array
+    index: np.uint16
 
     def __init__(self, seed: np.uint32) -> None:
         seed = np.uint32(seed)

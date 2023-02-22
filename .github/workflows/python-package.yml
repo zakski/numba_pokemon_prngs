@@ -7,7 +7,37 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  build-with-numba:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10"]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install poetry
+        poetry install --all-extras --no-root
+        export NPP_USE_NUMBA='TRUE'
+    - name: Lint with pylint
+      run: |
+        poetry run pylint --fail-under=9 $(git ls-files '*.py')
+    - name: Check formatting with black
+      run: |
+        poetry run black . --diff 
+    - name: Test with pytest
+      run: |
+        poetry run pytest
+
+  build-without-numba:
 
     runs-on: ubuntu-latest
     strategy:
@@ -26,6 +56,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install poetry
         poetry install --no-root
+        export NPP_USE_NUMBA='FALSE'
     - name: Lint with pylint
       run: |
         poetry run pylint --fail-under=9 $(git ls-files '*.py')

@@ -3,8 +3,9 @@ re-initialize or go backwards to reuse previous rands"""
 
 from __future__ import annotations
 from typing import TypeVar, Callable, Protocol, Type
-import numba
 import numpy as np
+from .options import USE_NUMBA
+from .compilation import optional_jitclass, array_type
 
 PRNG = TypeVar("PRNG")
 
@@ -39,17 +40,21 @@ def build_rnglist(
     assert size != 0 and (
         (size & (size - 1)) == 0
     ), "Size is not a perfect multiple of two"
-    numba_state_type = numba.from_dtype(state_type)
-    next_function: Callable[[PRNG], state_type] = rng_class.class_type.jit_methods[
-        next_function_name
-    ]
+    if USE_NUMBA:
+        next_function: Callable[[PRNG], state_type] = rng_class.class_type.jit_methods[
+            next_function_name
+        ]
+    else:
+        next_function: Callable[[PRNG], state_type] = rng_class.__dict__[
+            next_function_name
+        ]
 
-    @numba.experimental.jitclass(
+    @optional_jitclass(
         {
-            "list": numba_state_type[::1],  # contiguous array
-            "rng": rng_class.class_type.instance_type,
-            "head": numba.uint16,
-            "pointer": numba.uint16,
+            "list": array_type(np.uint32),  # contiguous array
+            "rng": rng_class.class_type.instance_type if USE_NUMBA else rng_class,
+            "head": np.uint16,
+            "pointer": np.uint16,
         }
     )
     class SpecificRNGList:

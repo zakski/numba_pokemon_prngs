@@ -1,17 +1,17 @@
 """Tiny Mersenne Twister Pseudo Random Number Generator"""
 
 from __future__ import annotations
-import numba
 import numpy as np
+from ..compilation import optional_jitclass, array_type
 
 
 # TODO: jump tables
 # TODO: staticmethod const functions
-@numba.experimental.jitclass
+@optional_jitclass
 class TinyMersenneTwister:
     """Tiny Mersenne Twister Pseudo Random Number Generator"""
 
-    state: numba.uint32[::1]  # contiguous array
+    state: array_type(np.uint32)  # contiguous array
 
     def __init__(self, seed: np.uint32) -> None:
         seed = np.uint32(seed)

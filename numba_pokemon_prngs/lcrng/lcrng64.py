@@ -3,8 +3,8 @@
 from __future__ import annotations
 from typing import Type, Callable
 import enum
-import numba
 import numpy as np
+from ..compilation import optional_jitclass, optional_njit
 
 
 class LCRNG64RandomDistribution(enum.IntEnum):
@@ -21,7 +21,7 @@ class LCRNG64RandomDistribution(enum.IntEnum):
 class LCRNG64:
     """64-bit LCRNG parent class"""
 
-    seed: numba.uint64
+    seed: np.uint64
 
     def __init__(self, seed: np.uint64) -> None:
         self.seed: np.uint64 = np.uint64(seed)
@@ -131,7 +131,7 @@ def lcrng64_init(
                 adv >>= 1
                 i += 1
 
-            @numba.njit(**kwargs)
+            @optional_njit(**kwargs)
             def jump_func(self: LCRNG64):
                 self.seed = np.uint64(
                     np.uint64(self.seed) * np.uint64(mult) + np.uint64(add)
@@ -150,7 +150,7 @@ def lcrng64_init(
             def const_rand(
                 maximum: np.uint32, **kwargs
             ) -> Callable[[LCRNG64], np.uint32]:
-                @numba.njit(**kwargs)
+                @optional_njit(**kwargs)
                 def rand_func(self: LCRNG64) -> np.uint32:
                     return np.uint32(
                         (np.uint64(self.next_u32()) * np.uint64(maximum))
@@ -173,7 +173,7 @@ def lcrng64_init(
         lcrng_class.jump = jump
         lcrng_class.next_rand = next_rand
 
-        lcrng_class = numba.experimental.jitclass(lcrng_class)
+        lcrng_class = optional_jitclass(lcrng_class)
 
         lcrng_class.const_jump = const_jump
         lcrng_class.const_rand = const_rand
