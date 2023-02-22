@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build-with-numba:
+  build:
 
     runs-on: ubuntu-latest
     strategy:
@@ -25,44 +25,30 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install poetry
-        poetry install --all-extras --no-root
-        export NPP_USE_NUMBA='TRUE'
     - name: Lint with pylint
       run: |
         poetry run pylint --fail-under=9 $(git ls-files '*.py')
     - name: Check formatting with black
       run: |
         poetry run black . --diff 
-    - name: Test with pytest
+    - name: Install poetry dependencies w/o numba
       run: |
-        poetry run pytest
-
-  build-without-numba:
-
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.9", "3.10"]
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install poetry
         poetry install --no-root
         export NPP_USE_NUMBA='FALSE'
-    - name: Lint with pylint
-      run: |
-        poetry run pylint --fail-under=9 $(git ls-files '*.py')
-    - name: Check formatting with black
-      run: |
-        poetry run black . --diff 
-    - name: Test with pytest
+    - name: Test with pytest w/o numba
       run: |
         poetry run pytest
+    - name: Install poetry dependencies w/numba
+      run: |
+        poetry install --all-extras --no-root
+        export NPP_USE_NUMBA='TRUE'
+    - name: Test with pytest w/numba
+      run: |
+        poetry run pytest
+    - name: Build wheel via poetry
+      run: poetry build --format=wheel
+    - name: Upload Wheel Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: wheel-artifact
+        path: ./*.whl
