@@ -68,7 +68,7 @@ jobs:
           tag: latest
           rm: true
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: ./dist/numba_pokemon_prngs-0.1.0-py3-none-any.whl
+          files: ./*
       - name: Summary
         run: |
           cat <<EOF >> $GITHUB_STEP_SUMMARY
