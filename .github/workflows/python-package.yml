@@ -67,7 +67,7 @@ jobs:
       - uses: pyTooling/Actions/releaser@main
         with:
           tag: latest
-          rm: true
+          #rm: true
           token: ${{ secrets.GITHUB_TOKEN }}
           files: wheel-artifact/*
       - name: Summary
