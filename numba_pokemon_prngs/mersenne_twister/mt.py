@@ -1,8 +1,8 @@
 """Mersenne Twister 19937 Pseudo Random Number Generator"""
 
 from __future__ import annotations
-import numba
 import numpy as np
+from ..compilation import optional_jitclass, array_type
 
 MAG02 = (np.uint32(0), np.uint32(0x9908B0DF))
 
@@ -10,20 +10,22 @@ MAG02 = (np.uint32(0), np.uint32(0x9908B0DF))
 # TODO: jump tables
 # TODO: staticmethod const functions
 # TODO: init_by_array
-@numba.experimental.jitclass
+@optional_jitclass
 class MersenneTwister:
     """Mersenne Twister Pseudo Random Number Generator"""
 
-    state: numba.uint32[::1]  # contiguous array
-    index: numba.uint16
+    state: array_type(np.uint32)  # contiguous array
+    index: np.uint16
 
     def __init__(self, seed: np.uint32) -> None:
+        seed = np.uint32(seed)
         self.state = np.empty(624, dtype=np.uint32)
         self.index = np.uint16(624)  # ensures shuffle after initialization
         self.re_init(seed)
 
     def re_init(self, seed: np.uint32) -> None:
         """Reinitialize without creating a new object"""
+        seed = np.uint32(seed)
         self.index = np.uint16(624)  # ensures shuffle after initialization
         self.state[0] = seed
 
@@ -35,6 +37,7 @@ class MersenneTwister:
 
     def advance(self, adv: np.uint32) -> None:
         """Advance Mersenne Twister sequence by adv"""
+        adv = np.uint32(adv)
         adv += np.uint32(self.index)
         while adv >= np.uint32(624):
             self.shuffle()
@@ -83,4 +86,4 @@ class MersenneTwister:
 
     def next_rand_mod(self, maximum: np.uint32) -> np.uint32:
         """Generate and return the next [0, maximum) random uint via modulo distribution"""
-        return self.next() % maximum
+        return self.next() % np.uint32(maximum)

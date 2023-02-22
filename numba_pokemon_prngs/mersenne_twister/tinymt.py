@@ -1,24 +1,26 @@
 """Tiny Mersenne Twister Pseudo Random Number Generator"""
 
 from __future__ import annotations
-import numba
 import numpy as np
+from ..compilation import optional_jitclass, array_type
 
 
 # TODO: jump tables
 # TODO: staticmethod const functions
-@numba.experimental.jitclass
+@optional_jitclass
 class TinyMersenneTwister:
     """Tiny Mersenne Twister Pseudo Random Number Generator"""
 
-    state: numba.uint32[::1]  # contiguous array
+    state: array_type(np.uint32)  # contiguous array
 
     def __init__(self, seed: np.uint32) -> None:
+        seed = np.uint32(seed)
         self.state = np.empty(4, dtype=np.uint32)
         self.re_init(seed)
 
     def re_init(self, seed: np.uint32) -> None:
         """Reinitialize without creating a new object"""
+        seed = np.uint32(seed)
         self.state[0] = seed
         self.state[1] = 0x8F7011EE
         self.state[2] = 0xFC78FF1F
@@ -85,4 +87,4 @@ class TinyMersenneTwister:
 
     def next_rand_mod(self, maximum: np.uint32) -> np.uint32:
         """Generate and return the next [0, maximum) random uint via modulo distribution"""
-        return self.next() % maximum
+        return self.next() % np.uint32(maximum)

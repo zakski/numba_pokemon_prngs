@@ -1,0 +1,113 @@
+"""Functions and classes to do with numba compilation"""
+
+from typing import get_type_hints
+import numpy as np
+from .options import USE_NUMBA
+
+if USE_NUMBA:
+    import numba
+
+    def unituple_type(np_dtype, count):
+        """Corresponding type for a unituple of np_dtype"""
+        return numba.types.UniTuple(numba.from_dtype(np_dtype), count)
+
+    def array_type(np_dtype, ndim: int = 1, layout: str = "C", readonly: bool = False):
+        """Corresponding type for an array of np_dtype"""
+        return numba.types.Array(
+            numba.from_dtype(np_dtype), ndim, layout, readonly=readonly
+        )
+
+    def return_type(output_type, input_types):
+        """Function that takes inputs and returns the return type based on the output type"""
+        output_type = (
+            output_type
+            if isinstance(output_type, numba.types.Type)
+            else numba.from_dtype(output_type)
+        )
+        return output_type(
+            *(
+                input_type
+                if isinstance(input_type, numba.types.Type)
+                else numba.from_dtype(input_type)
+                for input_type in input_types
+            )
+        )
+
+    def convert_spec(spec):
+        """Convert a spec containing numpy types to use numba types"""
+        for attr, py_type in spec.copy().items():
+            if not isinstance(py_type, numba.types.Type):
+                spec[attr] = numba.from_dtype(py_type)
+        return spec
+
+    def convert_spec_cls(spec, cls):
+        """Convert a spec built from type hints containing numpy types to use numba types"""
+        spec = spec or {}
+        for attr, py_type in get_type_hints(cls).items():
+            if attr not in spec and not isinstance(py_type, numba.types.Type):
+                spec[attr] = numba.from_dtype(py_type)
+        return spec
+
+else:
+
+    def unituple_type(np_dtype, count):
+        """Corresponding type for a unituple of np_dtype"""
+        return tuple
+
+    def array_type(np_dtype, ndim: int = 1, layout: str = "C", readonly: bool = False):
+        """Corresponding type for an array of np_dtype"""
+        return np.ndarray
+
+    def return_type(output_type, input_types):
+        """Function that takes inputs and returns the return type based on the output type"""
+        return lambda *args: output_type
+
+
+def optional_jitclass(cls_or_spec=None, spec=None):
+    """Optional numba.experimental.jitclass"""
+    if USE_NUMBA:
+        if (
+            cls_or_spec is not None
+            and spec is None
+            and not isinstance(cls_or_spec, type)
+        ):
+            cls_or_spec = convert_spec(cls_or_spec)
+        elif spec is not None:
+            spec = convert_spec(spec)
+
+        if cls_or_spec is None:
+
+            def wrap(cls):
+                spec = convert_spec_cls(None, cls)
+                return numba.experimental.jitclass(cls_or_spec=cls, spec=spec)
+
+            return wrap
+
+        if isinstance(cls_or_spec, type):
+            spec = convert_spec_cls(spec, cls_or_spec)
+        return numba.experimental.jitclass(cls_or_spec=cls_or_spec, spec=spec)
+    else:
+        if not isinstance(cls_or_spec, type):
+
+            def wrap(cls):
+                return cls
+
+            return wrap
+        return cls_or_spec
+
+
+def optional_njit(signature_or_function=None, locals=None, **options):
+    """Optional numba.njit"""
+    if locals is None:
+        locals = {}
+    if USE_NUMBA:
+        return numba.njit(
+            signature_or_function=signature_or_function,
+            locals=convert_spec(locals),
+            **options
+        )
+
+    def wrap(func):
+        return func
+
+    return wrap

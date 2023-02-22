@@ -1,24 +1,29 @@
 """Utility @njit compiled numba functions"""
-import numba
 import numpy as np
+from .compilation import optional_njit, return_type
 
 
-@numba.njit(numba.uint32(numba.uint32), locals={"val": numba.uint32})
+@optional_njit(return_type(np.uint32, (np.uint32,)), locals={"val": np.uint32})
 def change_endian_u32(val: np.uint32) -> np.uint32:
     """Swap endian bytes"""
+    val = np.uint32(val)
     val = ((val << np.uint32(8)) & np.uint32(0xFF00FF00)) | (
         (val >> np.uint32(8)) & np.uint32(0xFF00FF)
     )
-    return (val << np.uint32(16)) | (val >> np.uint32(16))
+    return np.uint32((val << np.uint32(16)) | (val >> np.uint32(16)))
 
 
-@numba.njit(numba.uint32(numba.uint32, numba.uint8))
+@optional_njit(return_type(np.uint32, (np.uint32, np.uint8)), locals={"val": np.uint32})
 def rotate_left_u32(val: np.uint32, count: np.uint8) -> np.uint32:
     """Rotate bits left by count"""
-    return (val << count) | (val >> (np.uint8(32) - count))
+    val = np.uint32(val)
+    count = np.uint8(count)
+    return np.uint32((val << count) | (val >> (np.uint8(32) - count)))
 
 
-@numba.njit(numba.uint32(numba.uint32, numba.uint8))
+@optional_njit(return_type(np.uint32, (np.uint32, np.uint8)), locals={"val": np.uint32})
 def rotate_right_u32(val: np.uint32, count: np.uint8) -> np.uint32:
     """Rotate bits left by count"""
-    return (val << (np.uint8(32) - count)) | (val >> count)
+    val = np.uint32(val)
+    count = np.uint8(count)
+    return np.uint32((val << (np.uint8(32) - count)) | (val >> count))

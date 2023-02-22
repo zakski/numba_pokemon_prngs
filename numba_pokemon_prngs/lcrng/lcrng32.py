@@ -3,8 +3,8 @@
 from __future__ import annotations
 from typing import Type, Callable
 import enum
-import numba
 import numpy as np
+from ..compilation import optional_jitclass, optional_njit
 
 
 class LCRNG32RandomDistribution(enum.IntEnum):
@@ -24,14 +24,14 @@ class LCRNG32RandomDistribution(enum.IntEnum):
 class LCRNG32:
     """32-bit LCRNG parent class"""
 
-    seed: numba.uint32
+    seed: np.uint32
 
     def __init__(self, seed: np.uint32) -> None:
-        self.seed: np.uint32 = seed
+        self.seed: np.uint32 = np.uint32(seed)
 
     def re_init(self, seed: np.uint32) -> None:
         """Reinitialize without creating a new object"""
-        self.seed = seed
+        self.seed = np.uint32(seed)
 
     def next(self) -> np.uint32:
         """
@@ -47,6 +47,7 @@ class LCRNG32:
 
     def advance(self, adv: np.uint32) -> np.uint32:
         """Advance the LCRNG sequence by adv"""
+        adv = np.uint32(adv)
         for _ in range(adv):
             self.next()
         return np.uint32(self.seed)
@@ -133,7 +134,7 @@ def lcrng32_init(
                 adv >>= 1
                 i += 1
 
-            @numba.njit(**kwargs)
+            @optional_njit(**kwargs)
             def jump_func(self: LCRNG32):
                 self.seed = np.uint32(
                     np.uint32(self.seed) * np.uint32(mult) + np.uint32(add)
@@ -150,7 +151,7 @@ def lcrng32_init(
             def const_rand(
                 maximum: np.uint16, **kwargs
             ) -> Callable[[LCRNG32], np.uint16]:
-                @numba.njit(**kwargs)
+                @optional_njit(**kwargs)
                 def rand_func(self: LCRNG32) -> np.uint16:
                     return np.uint16(self.next_u16()) % np.uint16(maximum)
 
@@ -163,8 +164,10 @@ def lcrng32_init(
                     (np.uint16(0xFFFF) // np.uint16(maximum)) + np.uint16(1)
                 )
 
-            def const_rand(maximum: np.uint16) -> Callable[[LCRNG32], np.uint16]:
-                @numba.njit()
+            def const_rand(
+                maximum: np.uint16, **kwargs
+            ) -> Callable[[LCRNG32], np.uint16]:
+                @optional_njit(**kwargs)
                 def rand_func(self: LCRNG32) -> np.uint16:
                     return np.uint16(self.next_u16()) // np.uint16(
                         (np.uint16(0xFFFF) // np.uint16(maximum)) + np.uint16(1)
@@ -186,7 +189,7 @@ def lcrng32_init(
         lcrng_class.jump = jump
         lcrng_class.next_rand = next_rand
 
-        lcrng_class = numba.experimental.jitclass(lcrng_class)
+        lcrng_class = optional_jitclass(lcrng_class)
 
         lcrng_class.const_jump = const_jump
         lcrng_class.const_rand = const_rand
