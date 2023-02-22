@@ -25,7 +25,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install poetry
-        poetry install --dev-only
+        poetry install --only dev
     - name: Lint with pylint
       run: |
         poetry run pylint --fail-under=9 $(git ls-files '*.py')
