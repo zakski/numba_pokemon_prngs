@@ -9,6 +9,7 @@ on:
 jobs:
   build:
 
+    name: Build and Test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -53,3 +54,26 @@ jobs:
       with:
         name: wheel-artifact
         path: ./dist/numba_pokemon_prngs-0.1.0-py3-none-any.whl
+
+  # taken from https://github.com/kernelkit/infix/blob/main/.github/workflows/build.yml
+  release:
+
+    name: Upload Latest Build
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+      - uses: pyTooling/Actions/releaser@main
+        with:
+          tag: latest
+          rm: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: artifact/*
+      - name: Summary
+        run: |
+          cat <<EOF >> $GITHUB_STEP_SUMMARY
+          # Latest Build Complete! :rocket:
+          
+          For the public download links of these build artifacts, please see:
+           <https://github.com/Lincoln-LM/numba_pokemon_prngs/releases/tag/latest>
+          EOF
