@@ -1,5 +1,26 @@
 # numba_pokemon_prngs
-Package for numba @jitclass implementations of the Pseudo-Random Number Generators used in the Pokemon series
+Package for numba @jitclass implementations (optionally uncompiled but with integers and arrays handled by numpy) of the Pseudo-Random Number Generators used in the Pokemon series
+
+## Installation
+numba-pokemon-prngs can be installed via pip with the following command
+
+```pip install "numba-pokemon-prngs[numba] @ git+https://github.com/Lincoln-LM/numba_pokemon_prngs"```
+
+or without numba support
+
+```pip install "numba-pokemon-prngs @ git+https://github.com/Lincoln-LM/numba_pokemon_prngs"```
+
+if numba is not detected, either by not being installed or for some other reason, numba-pokemon-prngs will default to relying only on numpy (as specified in [compilation.py](https://github.com/Lincoln-LM/numba_pokemon_prngs/blob/master/numba_pokemon_prngs/compilation.py), and will log a warning unless the environment variable ``NPP_USE_NUMBA`` is set to "FALSE" (or any value other than "TRUE").
+
+This environment variable can additionally be used to trigger numba-less mode even when numba is installed.
+
+additionally wheels for the latest commit are provided for direct installation at https://github.com/Lincoln-LM/numba_pokemon_prngs/releases/tag/latest
+
+and can be installed to micropip for [pyodide](https://github.com/Lincoln-LM/numba_pokemon_prngs/blob/master/numba_pokemon_prngs/compilation.py) via
+
+```micropip.install("numba_pokemon_prngs-0.1.0-py3-none-any.whl")```
+
+after pulling the latest build from https://github.com/Lincoln-LM/numba_pokemon_prngs/releases/download/latest/numba_pokemon_prngs-0.1.0-py3-none-any.whl
 
 ## Currently Supported PRNGs
 | Name                                | Description                                        | Parameters                                                                                                                                                                                                    | Additional Info                                             |
