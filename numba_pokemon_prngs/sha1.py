@@ -13,6 +13,7 @@ from .compilation import (
     unituple_type,
 )
 
+
 # "nazos" are game version and language specific constants that happen to be stored next to
 # SHA1 hashed data
 @optional_njit(return_type(array_type(np.uint32), (np.uint32,)))
