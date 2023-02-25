@@ -18,6 +18,7 @@ class LCRNG64RandomDistribution(enum.IntEnum):
     MULTIPLICATION_SHIFT = 1
 
 
+# TODO: reverse next
 class LCRNG64:
     """64-bit LCRNG parent class"""
 

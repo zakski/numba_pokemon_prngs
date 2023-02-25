@@ -10,6 +10,7 @@ MAG02 = (np.uint32(0), np.uint32(0x9908B0DF))
 # TODO: jump tables
 # TODO: staticmethod const functions
 # TODO: init_by_array
+# TODO: reverse next
 @optional_jitclass
 class MersenneTwister:
     """Mersenne Twister Pseudo Random Number Generator"""

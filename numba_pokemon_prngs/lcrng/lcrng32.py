@@ -21,6 +21,8 @@ class LCRNG32RandomDistribution(enum.IntEnum):
     RECIPROCAL_DIVISION = 2
 
 
+# TODO: reverse next
+# TODO: float rands
 class LCRNG32:
     """32-bit LCRNG parent class"""
 

@@ -7,6 +7,7 @@ from ..compilation import optional_jitclass, array_type
 
 # TODO: jump tables
 # TODO: staticmethod const functions
+# TODO: reverse next
 @optional_jitclass
 class TinyMersenneTwister:
     """Tiny Mersenne Twister Pseudo Random Number Generator"""

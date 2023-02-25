@@ -27,3 +27,19 @@ def rotate_right_u32(val: np.uint32, count: np.uint8) -> np.uint32:
     val = np.uint32(val)
     count = np.uint8(count)
     return np.uint32((val << (np.uint8(32) - count)) | (val >> count))
+
+
+@optional_njit(return_type(np.uint64, (np.uint64, np.uint8)), locals={"val": np.uint64})
+def rotate_left_u64(val: np.uint64, count: np.uint8) -> np.uint64:
+    """Rotate bits left by count"""
+    val = np.uint64(val)
+    count = np.uint8(count)
+    return np.uint64((val << count) | (val >> (np.uint8(64) - count)))
+
+
+@optional_njit(return_type(np.uint64, (np.uint64, np.uint8)), locals={"val": np.uint64})
+def rotate_right_u64(val: np.uint64, count: np.uint8) -> np.uint64:
+    """Rotate bits left by count"""
+    val = np.uint64(val)
+    count = np.uint8(count)
+    return np.uint64((val << (np.uint8(64) - count)) | (val >> count))
