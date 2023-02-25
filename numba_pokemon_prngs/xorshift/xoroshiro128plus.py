@@ -108,6 +108,7 @@ class SplitMixXoroshiro128Plus(Xoroshiro128Plus):
     def re_init(self, seed: np.uint64) -> None:
         seed = np.uint64(seed)
         self.state[0] = self.splitmix(seed, np.uint64(0x9E3779B97F4A7C15))
+        # 0x9E3779B97F4A7C15 + 0x9E3779B97F4A7C15 = 0x3C6EF372FE94F82A
         self.state[1] = self.splitmix(seed, np.uint64(0x3C6EF372FE94F82A))
 
     @staticmethod
