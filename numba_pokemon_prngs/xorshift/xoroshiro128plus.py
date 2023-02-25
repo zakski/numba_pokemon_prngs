@@ -87,12 +87,13 @@ class Xoroshiro128PlusRejection(Xoroshiro128Plus):
     @staticmethod
     def bit_mask(val: np.uint32) -> np.uint32:
         """Create a bitmask that includes only up to the MSB of val"""
-        val -= 1
-        val |= val >> 1
-        val |= val >> 2
-        val |= val >> 4
-        val |= val >> 8
-        val |= val >> 16
+        val = np.uint32(val)
+        val -= np.uint32(1)
+        val |= val >> np.uint32(1)
+        val |= val >> np.uint32(2)
+        val |= val >> np.uint32(4)
+        val |= val >> np.uint32(8)
+        val |= val >> np.uint32(16)
         return val
 
 
