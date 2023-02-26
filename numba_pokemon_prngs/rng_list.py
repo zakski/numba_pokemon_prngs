@@ -2,7 +2,8 @@
 re-initialize or go backwards to reuse previous rands"""
 
 from __future__ import annotations
-from typing import TypeVar, Callable, Protocol, Type
+from typing import TypeVar, Callable, Type
+from typing_extensions import Protocol
 import numpy as np
 from .options import USE_NUMBA
 from .compilation import optional_jitclass, array_type
