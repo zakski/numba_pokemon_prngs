@@ -5,6 +5,7 @@ from typing import Type, Callable
 import enum
 import numpy as np
 from ..compilation import optional_jitclass, optional_njit
+from ..compatability import mod_inv
 
 
 class LCRNG32RandomDistribution(enum.IntEnum):
@@ -86,7 +87,7 @@ def lcrng32_init(
 ) -> Callable[[Type[LCRNG32]], Type[LCRNG32]]:
     """Initialize a LCRNG32 class with constants and random distribution"""
     if reverse:
-        mult = np.uint32(pow(mult, -1, 0x100000000))
+        mult = np.uint32(mod_inv(mult, 0x100000000))
         add = np.uint32(-np.uint32(add) * mult)
     else:
         mult = np.uint32(mult)
