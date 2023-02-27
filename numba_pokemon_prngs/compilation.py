@@ -66,6 +66,7 @@ if USE_NUMBA:
         return spec
 
 else:
+    # pylint disable=unused-argument
 
     def optional_ir_function(function, sig):
         """Optional custom IR function to be used in place of `function`"""
@@ -82,6 +83,8 @@ else:
     def return_type(output_type, input_types):
         """Function that takes inputs and returns the return type based on the output type"""
         return lambda *args: output_type
+
+    # pylint enable=unused-argument
 
 
 def optional_jitclass(cls_or_spec=None, spec=None):
