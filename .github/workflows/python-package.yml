@@ -28,12 +28,6 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install poetry
         poetry install --only dev
-    - name: Lint with pylint
-      run: |
-        poetry run pylint --fail-under=9 $(git ls-files '*.py')
-    - name: Check formatting with black
-      run: |
-        poetry run black . --diff 
     - name: Install poetry dependencies w/o numba
       run: |
         poetry install --no-root
@@ -48,6 +42,12 @@ jobs:
     - name: Test with pytest w/numba
       run: |
         poetry run pytest
+    - name: Lint with pylint
+      run: |
+        poetry run pylint --fail-under=9 $(git ls-files '*.py')
+    - name: Check formatting with black
+      run: |
+        poetry run black . --diff 
     - name: Build wheel via poetry
       run: poetry build --format=wheel
     - name: Upload Wheel Artifact
