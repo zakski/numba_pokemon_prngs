@@ -6,6 +6,21 @@ from .options import USE_NUMBA
 
 if USE_NUMBA:
     import numba
+    from numba.core.imputils import lower_builtin
+    from numba.core.typing.templates import AbstractTemplate, signature, infer_global
+
+    def optional_ir_function(function, sig):
+        """Optional custom IR function to be used in place of `function`"""
+
+        @infer_global(function)
+        class _CustomTemplate(AbstractTemplate):
+            """Custom Typing Template"""
+
+            def generic(self, args, _kws):
+                """Generic function signature match"""
+                return signature(sig.return_type, *args)
+
+        return lower_builtin(function, *sig.args)
 
     def unituple_type(np_dtype, count):
         """Corresponding type for a unituple of np_dtype"""
@@ -22,7 +37,9 @@ if USE_NUMBA:
         output_type = (
             output_type
             if isinstance(output_type, numba.types.Type)
-            else numba.from_dtype(output_type)
+            else (
+                numba.void if output_type == np.void0 else numba.from_dtype(output_type)
+            )
         )
         return output_type(
             *(
@@ -49,6 +66,11 @@ if USE_NUMBA:
         return spec
 
 else:
+    # pylint disable=unused-argument
+
+    def optional_ir_function(function, sig):
+        """Optional custom IR function to be used in place of `function`"""
+        raise NotImplementedError("IR Functions are not implemented outside of numba")
 
     def unituple_type(np_dtype, count):
         """Corresponding type for a unituple of np_dtype"""
@@ -61,6 +83,8 @@ else:
     def return_type(output_type, input_types):
         """Function that takes inputs and returns the return type based on the output type"""
         return lambda *args: output_type
+
+    # pylint enable=unused-argument
 
 
 def optional_jitclass(cls_or_spec=None, spec=None):
@@ -106,6 +130,8 @@ def optional_njit(signature_or_function=None, locals=None, **options):
             locals=convert_spec(locals),
             **options
         )
+
+    # TODO: support @optional_njit w/o arguments provided
 
     def wrap(func):
         return func

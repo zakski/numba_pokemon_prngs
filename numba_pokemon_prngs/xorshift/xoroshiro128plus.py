@@ -42,6 +42,7 @@ class Xoroshiro128Plus:
 class Xoroshiro128PlusRejection(Xoroshiro128Plus):
     """Xoroshiro128+ Pseudo Random Number Generator w/rejection sampling"""
 
+    # pylint: disable=arguments-differ, super-init-not-called
     def __init__(
         self, seed_0: np.uint64, seed_1: np.uint64 = np.uint64(0x82A2B175229D6A5B)
     ) -> None:
@@ -53,6 +54,8 @@ class Xoroshiro128PlusRejection(Xoroshiro128Plus):
     ) -> None:
         self.state[0] = np.uint64(seed_0)
         self.state[1] = np.uint64(seed_1)
+
+    # pylint: enable=arguments-differ, super-init-not-called
 
     def next(self) -> np.uint64:
         seed_0 = self.state[0]
@@ -101,6 +104,7 @@ class Xoroshiro128PlusRejection(Xoroshiro128Plus):
 class SplitMixXoroshiro128Plus(Xoroshiro128Plus):
     """Xoroshiro128+ Pseudo Random Number Generator w/splitmix initialization"""
 
+    # pylint: disable=arguments-differ, super-init-not-called
     def __init__(self, seed: np.uint64) -> None:
         self.state = np.empty(2, np.uint64)
         self.re_init(np.uint64(seed))
@@ -110,6 +114,8 @@ class SplitMixXoroshiro128Plus(Xoroshiro128Plus):
         self.state[0] = self.splitmix(seed, np.uint64(0x9E3779B97F4A7C15))
         # 0x9E3779B97F4A7C15 + 0x9E3779B97F4A7C15 = 0x3C6EF372FE94F82A
         self.state[1] = self.splitmix(seed, np.uint64(0x3C6EF372FE94F82A))
+
+    # pylint: enable=arguments-differ, super-init-not-called
 
     @staticmethod
     def splitmix(seed: np.uint64, state: np.uint64) -> np.uint64:
