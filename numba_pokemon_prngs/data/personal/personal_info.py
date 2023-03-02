@@ -66,7 +66,7 @@ class PersonalInfo3:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
@@ -99,7 +99,7 @@ class PersonalInfo4:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
@@ -136,7 +136,7 @@ class PersonalInfo5BW:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
@@ -179,7 +179,7 @@ class PersonalInfo5B2W2:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
@@ -223,7 +223,7 @@ class PersonalInfo6XY:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
@@ -266,7 +266,7 @@ class PersonalInfo6AO:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
@@ -310,7 +310,7 @@ class PersonalInfo7:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
@@ -359,7 +359,7 @@ class PersonalInfo7GG:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
@@ -408,7 +408,7 @@ class PersonalInfo8SWSH:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
@@ -461,7 +461,7 @@ class PersonalInfo8BDSP:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
@@ -506,7 +506,7 @@ class PersonalInfo8LA:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
@@ -559,7 +559,7 @@ class PersonalInfo9SV:
 
     hp: U8
     attack: U8
-    defemse: U8
+    defense: U8
     speed: U8
     special_attack: U8
     special_defense: U8
