@@ -1,7 +1,7 @@
 """PersonalInfo for each Generation"""
 
 import numpy as np
-from ..util import dtype_dataclass, unused_bytes, U8
+from ..util import dtype_dataclass, unused_bytes, U8, U16
 
 
 @dtype_dataclass
@@ -60,14 +60,33 @@ PersonalInfo2: np.dtype
 assert PersonalInfo2.itemsize == 0x20
 
 
-# TODO: G3+ personal info specification
-
-
 @dtype_dataclass
 class PersonalInfo3:
     """PersonalInfo for Generation 3"""
 
-    data: unused_bytes(0x1C)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    base_exp: U8
+    ev_yield: U16
+    item_1: U16
+    item_2: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U8
+    ability_2: U8
+    escape_rate: U8
+    misc: unused_bytes(3)
 
 
 PersonalInfo3: np.dtype
@@ -78,7 +97,33 @@ assert PersonalInfo3.itemsize == 0x1C
 class PersonalInfo4:
     """PersonalInfo for Generation 4"""
 
-    data: unused_bytes(0x2C)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    base_exp: U8
+    ev_yield: U16
+    item_1: U16
+    item_2: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U8
+    ability_2: U8
+    escape_rate: U8
+    misc: unused_bytes(3)
+    tm_hm: unused_bytes(13)
+    # Manually added attributes
+    form_count: U8
+    form_stats_index: U16
 
 
 PersonalInfo4: np.dtype
@@ -89,7 +134,39 @@ assert PersonalInfo4.itemsize == 0x2C
 class PersonalInfo5BW:
     """PersonalInfo for Generation 5 Black and White"""
 
-    data: unused_bytes(0x3C)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    evo_stage: U8
+    ev_yield: U16
+    item_1: U16
+    item_2: U16
+    item_3: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U8
+    ability_2: U8
+    ability_h: U8
+    escape_rate: U8
+    form_stats_index: U16
+    form_sprite: U16
+    form_count: U8
+    misc: U8
+    base_exp: U16
+    height: U16
+    weight: U16
+    tm_hm: unused_bytes(16)
+    type_tutors: unused_bytes(4)
 
 
 PersonalInfo5BW: np.dtype
@@ -100,7 +177,40 @@ assert PersonalInfo5BW.itemsize == 0x3C
 class PersonalInfo5B2W2:
     """PersonalInfo for Generation 5 Black 2 and White 2"""
 
-    data: unused_bytes(0x4C)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    evo_stage: U8
+    ev_yield: U16
+    item_1: U16
+    item_2: U16
+    item_3: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U8
+    ability_2: U8
+    ability_h: U8
+    escape_rate: U8
+    form_stats_index: U16
+    form_sprite: U16
+    form_count: U8
+    misc: U8
+    base_exp: U16
+    height: U16
+    weight: U16
+    tm_hm: unused_bytes(16)
+    type_tutors: unused_bytes(4)
+    specific_tutors: unused_bytes(16)
 
 
 PersonalInfo5B2W2: np.dtype
@@ -111,7 +221,39 @@ assert PersonalInfo5B2W2.itemsize == 0x4C
 class PersonalInfo6XY:
     """PersonalInfo for Generation 6 X and Y"""
 
-    data: unused_bytes(0x40)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    evo_stage: U8
+    ev_yield: U16
+    item_1: U16
+    item_2: U16
+    item_3: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U8
+    ability_2: U8
+    ability_h: U8
+    escape_rate: U8
+    form_stats_index: U16
+    form_sprite: U16
+    form_count: U8
+    misc: U8
+    base_exp: U16
+    height: U16
+    weight: U16
+    tm_hm: unused_bytes(16)
+    type_tutors: unused_bytes(8)
 
 
 PersonalInfo6XY: np.dtype
@@ -122,7 +264,40 @@ assert PersonalInfo6XY.itemsize == 0x40
 class PersonalInfo6AO:
     """PersonalInfo for Generation 6 Omega Ruby and Alpha Sapphire"""
 
-    data: unused_bytes(0x50)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    evo_stage: U8
+    ev_yield: U16
+    item_1: U16
+    item_2: U16
+    item_3: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U8
+    ability_2: U8
+    ability_h: U8
+    escape_rate: U8
+    form_stats_index: U16
+    form_sprite: U16
+    form_count: U8
+    misc: U8
+    base_exp: U16
+    height: U16
+    weight: U16
+    tm_hm: unused_bytes(16)
+    type_tutors: unused_bytes(8)
+    specific_tutors: unused_bytes(16)
 
 
 PersonalInfo6AO: np.dtype
@@ -133,7 +308,45 @@ assert PersonalInfo6AO.itemsize == 0x50
 class PersonalInfo7:
     """PersonalInfo for Generation 7"""
 
-    data: unused_bytes(0x54)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    evo_stage: U8
+    ev_yield: U16
+    item_1: U16
+    item_2: U16
+    item_3: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U8
+    ability_2: U8
+    ability_h: U8
+    escape_rate: U8
+    form_stats_index: U16
+    form_sprite: U16
+    form_count: U8
+    misc: U8
+    base_exp: U16
+    height: U16
+    weight: U16
+    tm: unused_bytes(16)
+    type_tutors: unused_bytes(4)
+    specific_tutors: unused_bytes(16)
+    special_z_item: U16
+    special_z_base_move: U16
+    special_z_move: U16
+    local_variant: U8
+    _padding: unused_bytes(1)
 
 
 PersonalInfo7: np.dtype
@@ -144,7 +357,45 @@ assert PersonalInfo7.itemsize == 0x54
 class PersonalInfo7GG:
     """PersonalInfo for Let's Go Pikachu and Eevee"""
 
-    data: unused_bytes(0x54)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    evo_stage: U8
+    ev_yield: U16
+    item_1: U16
+    item_2: U16
+    item_3: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U8
+    ability_2: U8
+    ability_h: U8
+    escape_rate: U8
+    form_stats_index: U16
+    form_sprite: U16
+    form_count: U8
+    misc: U8
+    base_exp: U16
+    height: U16
+    weight: U16
+    tm: unused_bytes(32)
+    go_species: U16
+    _padding_0: unused_bytes(2)
+    special_z_item: U16
+    special_z_base_move: U16
+    special_z_move: U16
+    local_variant: U8
+    _padding_1: unused_bytes(1)
 
 
 PersonalInfo7GG: np.dtype
@@ -155,7 +406,49 @@ assert PersonalInfo7GG.itemsize == 0x54
 class PersonalInfo8SWSH:
     """PersonalInfo for Generation 8 Sword and Shield"""
 
-    data: unused_bytes(0xB0)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    evo_stage: U8
+    ev_yield: U16
+    item_1: U16
+    item_2: U16
+    item_3: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U16
+    ability_2: U16
+    ability_h: U16
+    form_stats_index: U16
+    form_count: U8
+    misc: U8
+    base_exp: U16
+    height: U16
+    weight: U16
+    tm: unused_bytes(16)
+    type_tutors: unused_bytes(4)
+    tr: unused_bytes(16)
+    species: U16
+    _padding_0: unused_bytes(8)
+    hatch_species: U16
+    local_form_index: U16
+    regional_flags: U16
+    pokedex_index: U16
+    regional_form_index: U16
+    _padding_1: unused_bytes(72)
+    armor_tutor: unused_bytes(4)
+    armor_dex_index: U16
+    crown_dex_index: U16
 
 
 PersonalInfo8SWSH: np.dtype
@@ -166,7 +459,41 @@ assert PersonalInfo8SWSH.itemsize == 0xB0
 class PersonalInfo8BDSP:
     """PersonalInfo for Generation 8 Brilliant Diamond and Shining Pearl"""
 
-    data: unused_bytes(0x44)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    evo_stage: U8
+    ev_yield: U16
+    item_1: U16
+    item_2: U16
+    item_3: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U16
+    ability_2: U16
+    ability_h: U16
+    form_stats_index: U16
+    form_count: U8
+    misc: U8
+    base_exp: U16
+    height: U16
+    weight: U16
+    tm: unused_bytes(16)
+    type_tutors: unused_bytes(4)
+    species: U16
+    hatch_species: U16
+    hatch_form_index: U16
+    pokedex_index: U16
 
 
 PersonalInfo8BDSP: np.dtype
@@ -177,7 +504,49 @@ assert PersonalInfo8BDSP.itemsize == 0x44
 class PersonalInfo8LA:
     """PersonalInfo for Generation 8 Pokemon: Legends Arceus"""
 
-    data: unused_bytes(0xB0)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    evo_stage: U8
+    ev_yield: U16
+    item_1: U16
+    item_2: U16
+    item_3: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U16
+    ability_2: U16
+    ability_h: U16
+    form_stats_index: U16
+    form_count: U8
+    misc: U8
+    base_exp: U16
+    height: U16
+    weight: U16
+    _padding_0: unused_bytes(46)
+    hatch_species: U16
+    hatch_form_index: U16
+    regional_flags: U16
+    species: U16
+    form: U16
+    dex_index_hisui: U16
+    dex_index_hisui_local_1: U16
+    dex_index_hisui_local_2: U16
+    dex_index_hisui_local_3: U16
+    dex_index_hisui_local_4: U16
+    dex_index_hisui_local_5: U16
+    _padding_1: unused_bytes(60)
+    move_shop: unused_bytes(8)
 
 
 PersonalInfo8LA: np.dtype
@@ -188,7 +557,39 @@ assert PersonalInfo8LA.itemsize == 0xB0
 class PersonalInfo9SV:
     """PersonalInfo for Generation 9 Scarlet and Violet"""
 
-    data: unused_bytes(0x44)
+    hp: U8
+    attack: U8
+    defemse: U8
+    speed: U8
+    special_attack: U8
+    special_defense: U8
+    type_1: U8
+    type_2: U8
+    catch_rate: U8
+    evo_stage: U8
+    ev_yield: U16
+    gender: U8
+    hatch_cycles: U8
+    base_friendship: U8
+    exp_growth: U8
+    egg_group_1: U8
+    egg_group_2: U8
+    ability_1: U16
+    ability_2: U16
+    ability_h: U16
+    form_stats_index: U16
+    form_count: U8
+    misc: U8
+    is_present_in_game: U8
+    dex_group: U8
+    dex_index: U16
+    height: U16
+    weight: U16
+    hatch_species: U16
+    local_form_index: U16
+    regional_flags: U16
+    regional_form_index: U16
+    tm: unused_bytes(24)
 
 
 PersonalInfo9SV: np.dtype
