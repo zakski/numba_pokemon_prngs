@@ -1,6 +1,8 @@
 # numba_pokemon_prngs
 Package for numba @jitclass implementations (optionally uncompiled but with integers and arrays handled by numpy) of the Pseudo-Random Number Generators used in the Pokemon series
 
+Contents are *heavily* based on implementations found in [PokéFinder](https://github.com/Admiral-Fish/PokeFinder)
+
 ## Installation
 numba-pokemon-prngs can be installed via pip with the following command
 
