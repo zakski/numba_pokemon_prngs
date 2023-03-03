@@ -1,11 +1,10 @@
 """PersonalInfo for each Generation"""
 
 import numpy as np
-from typing_extensions import Protocol
-from ..util import dtype_dataclass, unused_bytes, U8, U16
+from ..util import DTypeDataclass, dtype_dataclass, unused_bytes, U8, U16
 
 
-class PersonalInfoProtocol(Protocol):
+class PersonalInfoProtocol(DTypeDataclass):
     """Protocol for a generic PersonalInfo class"""
 
     dtype: np.dtype

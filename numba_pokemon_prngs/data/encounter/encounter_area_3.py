@@ -1,0 +1,31 @@
+"""Encounter Slot Area Specification for Generation 3"""
+
+from typing import Annotated
+import numpy as np
+from ..util import dtype_array, dtype_dataclass, U8, U16
+
+
+@dtype_dataclass
+class Slot3:
+    """Gen 3 Encounter Slot"""
+
+    min_level: U8
+    max_level: U8
+    species: U16
+
+
+@dtype_dataclass
+class EncounterArea3:
+    """Gen 3 Encounter Slot Area"""
+
+    land_rate: U8
+    land: Annotated[list[Slot3], dtype_array(Slot3, 12)]
+    water_rate: U8
+    water: Annotated[list[Slot3], dtype_array(Slot3, 5)]
+    rock_rate: U8
+    rock: Annotated[list[Slot3], dtype_array(Slot3, 5)]
+    fish_rate: U8
+    fish: Annotated[list[Slot3], dtype_array(Slot3, 10)]
+
+
+EncounterArea3.dtype: np.dtype
