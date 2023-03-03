@@ -1,11 +1,17 @@
 """Utility functions for the data submodule"""
 
 from dataclasses import dataclass, fields
+from typing import TYPE_CHECKING
 import numpy as np
 
-U8 = np.dtype("u1")
-U16 = np.dtype("<u2")
-U32 = np.dtype("<u4")
+if TYPE_CHECKING:
+    U8 = np.uint8
+    U16 = np.uint8
+    U32 = np.uint8
+else:
+    U8 = np.dtype("u1")
+    U16 = np.dtype("<u2")
+    U32 = np.dtype("<u4")
 
 
 def dtype_dataclass(cls):
