@@ -3,6 +3,7 @@
 import importlib.resources as pkg_resources
 import numpy as np
 from .personal_info import (
+    PersonalInfoProtocol,
     PersonalInfo1,
     PersonalInfo2,
     PersonalInfo3,
@@ -21,13 +22,15 @@ from .personal_info import (
 from ...resources.bin import personal as personal_bin_directory
 
 
-def load_personal(identifier: str, dtype: np.dtype) -> np.recarray:
+def load_personal(identifier: str, personal_info: PersonalInfoProtocol) -> np.recarray:
     """Load array of PersonalInfo from file"""
 
     with pkg_resources.open_binary(
         personal_bin_directory, f"personal_{identifier}"
     ) as personal_info_file:
-        return np.fromfile(personal_info_file, dtype=dtype).view(np.recarray)
+        return np.fromfile(personal_info_file, dtype=personal_info.dtype).view(
+            np.recarray
+        )
 
 
 PERSONAL_INFO_RB = load_personal("rb", PersonalInfo1)

@@ -8,10 +8,13 @@ U16 = np.dtype("<u2")
 U32 = np.dtype("<u4")
 
 
-def dtype_dataclass(cls) -> np.dtype:
+def dtype_dataclass(cls):
     """Decorator to turn a dataclass into a numpy dtype"""
     dataclass_cls = dataclass(cls)
-    return np.dtype([(field.name, field.type) for field in fields(dataclass_cls)])
+    dataclass_cls.dtype = np.dtype(
+        [(field.name, field.type) for field in fields(dataclass_cls)]
+    )
+    return dataclass_cls
 
 
 def unused_bytes(size: int) -> np.dtype:

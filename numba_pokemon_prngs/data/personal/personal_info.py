@@ -1,14 +1,21 @@
 """PersonalInfo for each Generation"""
 
 import numpy as np
+from typing_extensions import Protocol
 from ..util import dtype_dataclass, unused_bytes, U8, U16
+
+
+class PersonalInfoProtocol(Protocol):
+    """Protocol for a generic PersonalInfo class"""
+
+    dtype: np.dtype
 
 
 @dtype_dataclass
 class PersonalInfo1:
     """PersonalInfo for Generation 1"""
 
-    gender: U8
+    gender_ratio: U8
     hp: U8
     attack: U8
     defense: U8
@@ -27,8 +34,8 @@ class PersonalInfo1:
     tm_hm: unused_bytes(7)
 
 
-PersonalInfo1: np.dtype
-assert PersonalInfo1.itemsize == 0x1C
+PersonalInfo1.dtype: np.dtype
+assert PersonalInfo1.dtype.itemsize == 0x1C
 
 
 @dtype_dataclass
@@ -48,7 +55,7 @@ class PersonalInfo2:
     base_exp: U8
     item_1: U8
     item_2: U8
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     _padding: unused_bytes(7)
     exp_growth: U8
@@ -56,8 +63,8 @@ class PersonalInfo2:
     tm_hm: unused_bytes(8)
 
 
-PersonalInfo2: np.dtype
-assert PersonalInfo2.itemsize == 0x20
+PersonalInfo2.dtype: np.dtype
+assert PersonalInfo2.dtype.itemsize == 0x20
 
 
 @dtype_dataclass
@@ -77,7 +84,7 @@ class PersonalInfo3:
     ev_yield: U16
     item_1: U16
     item_2: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -89,8 +96,8 @@ class PersonalInfo3:
     misc: unused_bytes(3)
 
 
-PersonalInfo3: np.dtype
-assert PersonalInfo3.itemsize == 0x1C
+PersonalInfo3.dtype: np.dtype
+assert PersonalInfo3.dtype.itemsize == 0x1C
 
 
 @dtype_dataclass
@@ -110,7 +117,7 @@ class PersonalInfo4:
     ev_yield: U16
     item_1: U16
     item_2: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -126,8 +133,8 @@ class PersonalInfo4:
     form_stats_index: U16
 
 
-PersonalInfo4: np.dtype
-assert PersonalInfo4.itemsize == 0x2C
+PersonalInfo4.dtype: np.dtype
+assert PersonalInfo4.dtype.itemsize == 0x2C
 
 
 @dtype_dataclass
@@ -148,7 +155,7 @@ class PersonalInfo5BW:
     item_1: U16
     item_2: U16
     item_3: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -169,8 +176,8 @@ class PersonalInfo5BW:
     type_tutors: unused_bytes(4)
 
 
-PersonalInfo5BW: np.dtype
-assert PersonalInfo5BW.itemsize == 0x3C
+PersonalInfo5BW.dtype: np.dtype
+assert PersonalInfo5BW.dtype.itemsize == 0x3C
 
 
 @dtype_dataclass
@@ -191,7 +198,7 @@ class PersonalInfo5B2W2:
     item_1: U16
     item_2: U16
     item_3: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -213,8 +220,8 @@ class PersonalInfo5B2W2:
     specific_tutors: unused_bytes(16)
 
 
-PersonalInfo5B2W2: np.dtype
-assert PersonalInfo5B2W2.itemsize == 0x4C
+PersonalInfo5B2W2.dtype: np.dtype
+assert PersonalInfo5B2W2.dtype.itemsize == 0x4C
 
 
 @dtype_dataclass
@@ -235,7 +242,7 @@ class PersonalInfo6XY:
     item_1: U16
     item_2: U16
     item_3: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -256,8 +263,8 @@ class PersonalInfo6XY:
     type_tutors: unused_bytes(8)
 
 
-PersonalInfo6XY: np.dtype
-assert PersonalInfo6XY.itemsize == 0x40
+PersonalInfo6XY.dtype: np.dtype
+assert PersonalInfo6XY.dtype.itemsize == 0x40
 
 
 @dtype_dataclass
@@ -278,7 +285,7 @@ class PersonalInfo6AO:
     item_1: U16
     item_2: U16
     item_3: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -300,8 +307,8 @@ class PersonalInfo6AO:
     specific_tutors: unused_bytes(16)
 
 
-PersonalInfo6AO: np.dtype
-assert PersonalInfo6AO.itemsize == 0x50
+PersonalInfo6AO.dtype: np.dtype
+assert PersonalInfo6AO.dtype.itemsize == 0x50
 
 
 @dtype_dataclass
@@ -322,7 +329,7 @@ class PersonalInfo7:
     item_1: U16
     item_2: U16
     item_3: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -349,8 +356,8 @@ class PersonalInfo7:
     _padding: unused_bytes(1)
 
 
-PersonalInfo7: np.dtype
-assert PersonalInfo7.itemsize == 0x54
+PersonalInfo7.dtype: np.dtype
+assert PersonalInfo7.dtype.itemsize == 0x54
 
 
 @dtype_dataclass
@@ -371,7 +378,7 @@ class PersonalInfo7GG:
     item_1: U16
     item_2: U16
     item_3: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -398,8 +405,8 @@ class PersonalInfo7GG:
     _padding_1: unused_bytes(1)
 
 
-PersonalInfo7GG: np.dtype
-assert PersonalInfo7GG.itemsize == 0x54
+PersonalInfo7GG.dtype: np.dtype
+assert PersonalInfo7GG.dtype.itemsize == 0x54
 
 
 @dtype_dataclass
@@ -420,7 +427,7 @@ class PersonalInfo8SWSH:
     item_1: U16
     item_2: U16
     item_3: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -451,8 +458,8 @@ class PersonalInfo8SWSH:
     crown_dex_index: U16
 
 
-PersonalInfo8SWSH: np.dtype
-assert PersonalInfo8SWSH.itemsize == 0xB0
+PersonalInfo8SWSH.dtype: np.dtype
+assert PersonalInfo8SWSH.dtype.itemsize == 0xB0
 
 
 @dtype_dataclass
@@ -473,7 +480,7 @@ class PersonalInfo8BDSP:
     item_1: U16
     item_2: U16
     item_3: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -496,8 +503,8 @@ class PersonalInfo8BDSP:
     pokedex_index: U16
 
 
-PersonalInfo8BDSP: np.dtype
-assert PersonalInfo8BDSP.itemsize == 0x44
+PersonalInfo8BDSP.dtype: np.dtype
+assert PersonalInfo8BDSP.dtype.itemsize == 0x44
 
 
 @dtype_dataclass
@@ -518,7 +525,7 @@ class PersonalInfo8LA:
     item_1: U16
     item_2: U16
     item_3: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -549,8 +556,8 @@ class PersonalInfo8LA:
     move_shop: unused_bytes(8)
 
 
-PersonalInfo8LA: np.dtype
-assert PersonalInfo8LA.itemsize == 0xB0
+PersonalInfo8LA.dtype: np.dtype
+assert PersonalInfo8LA.dtype.itemsize == 0xB0
 
 
 @dtype_dataclass
@@ -568,7 +575,7 @@ class PersonalInfo9SV:
     catch_rate: U8
     evo_stage: U8
     ev_yield: U16
-    gender: U8
+    gender_ratio: U8
     hatch_cycles: U8
     base_friendship: U8
     exp_growth: U8
@@ -592,5 +599,5 @@ class PersonalInfo9SV:
     tm: unused_bytes(24)
 
 
-PersonalInfo9SV: np.dtype
-assert PersonalInfo9SV.itemsize == 0x44
+PersonalInfo9SV.dtype: np.dtype
+assert PersonalInfo9SV.dtype.itemsize == 0x44
