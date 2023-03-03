@@ -9,6 +9,11 @@ if USE_NUMBA:
     from numba.core.imputils import lower_builtin
     from numba.core.typing.templates import AbstractTemplate, signature, infer_global
 
+    # pylint: disable=unused-import,no-name-in-module
+    from numba.typed import List as TypedList
+
+    # pylint: enable=unused-import,no-name-in-module
+
     def optional_ir_function(function, sig):
         """Optional custom IR function to be used in place of `function`"""
 
@@ -67,6 +72,7 @@ if USE_NUMBA:
 
 else:
     # pylint disable=unused-argument
+    TypedList = list
 
     def optional_ir_function(function, sig):
         """Optional custom IR function to be used in place of `function`"""

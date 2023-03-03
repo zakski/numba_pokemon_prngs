@@ -2,9 +2,10 @@
 
 import numpy as np
 from ..data.encounter.encounter_area_3 import EncounterArea3, Slot3
+from ..data.personal import PersonalInfo3
 from ..lcrng import PokeRNGMod
-from ..compilation import optional_njit
-from ..enums import Encounter
+from ..compilation import optional_njit, TypedList
+from ..enums import Encounter, Game, Lead
 
 
 def compute_table(ranges: tuple[int], greater: bool = False) -> np.array:
@@ -44,3 +45,110 @@ def calculate_hslot(
     if encounter_type == Encounter.SURFING:
         return encounter_area.water[ROCK_SMASH_AND_SURF_TABLE[hslot_rand(rng)]]
     return encounter_area.land[GRASS_TABLE[hslot_rand(rng)]]
+
+
+@optional_njit
+def calculate_hslot_lead(
+    encounter_area: EncounterArea3,
+    rng: PokeRNGMod,
+    encounter_type: Encounter,
+    lead: Lead,
+    modified_slots: list[Slot3],
+) -> Slot3:
+    """Calculate hslot accounting for magnet pull and static"""
+    if (
+        (lead == Lead.MAGNET_PULL or lead == Lead.STATIC)
+        and rng.next_rand(2) == 0
+        and len(modified_slots) != 0
+    ):
+        return modified_slots[rng.next_rand(len(modified_slots))]
+    return calculate_hslot(encounter_area, rng, encounter_type)
+
+
+@optional_njit
+def calculate_level(slot: Slot3, rng: PokeRNGMod, pressure: bool) -> int:
+    """Calculate the level of a pokemon taking into account modification from pressure"""
+    minimum = slot.min_level
+    maximum = slot.max_level
+    level_range = maximum - minimum + 1
+    rand = rng.next_rand(level_range)
+    if pressure:
+        if rng.next_rand(2) == 0:
+            return maximum
+        if rand != 0:
+            rand -= 1
+    return minimum + rand
+
+
+@optional_njit
+def is_rse_safari_zone(location: int, game: Game) -> bool:
+    """Check if a locaton is in the RSE safari zone"""
+    if game & (Game.RUBY | Game.SAPPHIRE):
+        if (
+            location == 90
+            or location == 187
+            or location == 89
+            or location == 186
+            or location == 92
+            or location == 189
+            or location == 91
+            or location == 188
+        ):
+            return True
+    elif game & Game.EMERALD:
+        if (
+            location == 73
+            or location == 98
+            or location == 74
+            or location == 20
+            or location == 97
+            or location == 72
+        ):
+            return True
+    return False
+
+
+@optional_njit
+def get_modified_slots(
+    slots: list[Slot3],
+    lead: Lead,
+    game: Game,
+    personal_info_table: list[PersonalInfo3],
+):
+    """Get modified slots from type-specific leads"""
+    encounters = TypedList()
+    if lead == Lead.MAGNET_PULL:
+        lead_type = 8
+    elif lead == Lead.STATIC:
+        lead_type = (
+            13
+            if game
+            & (
+                Game.RUBY
+                | Game.SAPPHIRE
+                | Game.EMERALD
+                | Game.FIRE_RED
+                | Game.LEAF_GREEN
+                | Game.DIAMOND
+                | Game.PEARL
+                | Game.PLATINUM
+                | Game.HEART_GOLD
+                | Game.SOUL_SILVER
+            )
+            else 12
+        )
+    elif lead == Lead.HARVEST:
+        lead_type = 11
+    elif lead == Lead.FLASH_FIRE:
+        lead_type = 9
+    elif lead == Lead.STORM_DRAIN:
+        lead_type = 10
+    else:
+        return encounters
+
+    for i, slot in enumerate(slots):
+        info: PersonalInfo3 = personal_info_table[slot.species & 0x3FF]
+        if info.type_1 == lead_type or info.type_2 == lead_type:
+            encounters.append(np.uint8(i))
+
+    return encounters
