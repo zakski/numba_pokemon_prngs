@@ -214,7 +214,12 @@ def load_encounter_3(game: Game) -> tuple[tuple[str], np.recarray]:
         if fishing_mons:
             encounter_area.fish_rate = encounter["fishing_mons"]["encounter_rate"]
             for i, slot in enumerate(encounter["fishing_mons"]["mons"]):
-                encounter_slot = encounter_area.fish[i]
+                if i < 2:
+                    encounter_slot = encounter_area.fish_old[i]
+                elif i < 5:
+                    encounter_slot = encounter_area.fish_good[i - 2]
+                else:
+                    encounter_slot = encounter_area.fish_super[i - 5]
                 encounter_slot.min_level = slot["min_level"]
                 encounter_slot.max_level = slot["max_level"]
                 encounter_slot.species = CONSTANT_CASE_SPECIES_EN.index(slot["species"])

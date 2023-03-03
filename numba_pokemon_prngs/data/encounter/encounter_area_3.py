@@ -25,7 +25,9 @@ class EncounterArea3:
     rock_rate: U8
     rock: Annotated[list[Slot3], dtype_array(Slot3, 5)]
     fish_rate: U8
-    fish: Annotated[list[Slot3], dtype_array(Slot3, 10)]
+    fish_old: Annotated[list[Slot3], dtype_array(Slot3, 2)]
+    fish_good: Annotated[list[Slot3], dtype_array(Slot3, 3)]
+    fish_super: Annotated[list[Slot3], dtype_array(Slot3, 5)]
 
 
 EncounterArea3.dtype: np.dtype
