@@ -126,18 +126,21 @@ def clean_map_string(map_string: str) -> str:
 
     strings = map_string.split()
     for i, string in enumerate(strings):
-        if match := re.match(r"Route(\d+)", string, re.IGNORECASE):
+        match = re.match(r"Route(\d+)", string, re.IGNORECASE)
+        if match:
             strings[i] = f"Route {match[1]}"
-        elif match := re.match(r"Room(\d+)", string, re.IGNORECASE):
-            strings[i] = f"Room {match[1]}"
-        elif re.match(r"B(\d+)F", string):
-            strings[i] = string
-        elif re.match(r"(\d+)F", string):
-            strings[i] = string
-        elif re.match(r"(\d+)R", string):
-            strings[i] = string
         else:
-            strings[i] = string.capitalize()
+            match = re.match(r"Room(\d+)", string, re.IGNORECASE)
+            if match:
+                strings[i] = f"Room {match[1]}"
+            elif re.match(r"B(\d+)F", string):
+                strings[i] = string
+            elif re.match(r"(\d+)F", string):
+                strings[i] = string
+            elif re.match(r"(\d+)R", string):
+                strings[i] = string
+            else:
+                strings[i] = string.capitalize()
 
     return " ".join(strings)
 
@@ -194,8 +197,8 @@ def load_encounter_3(game: Game) -> tuple[tuple[str], np.recarray]:
                 encounter_slot.min_level = slot["min_level"]
                 encounter_slot.max_level = slot["max_level"]
                 encounter_slot.species = CONSTANT_CASE_SPECIES_EN.index(slot["species"])
-                if (encounter_map := encounter["map"]) in UNOWN_ENCOUNTERS:
-                    form = UNOWN_ENCOUNTERS[encounter_map][i]
+                if encounter["map"] in UNOWN_ENCOUNTERS:
+                    form = UNOWN_ENCOUNTERS[encounter["map"]][i]
                     encounter_slot.species |= form << 11
         if water_mons:
             encounter_area.water_rate = encounter["water_mons"]["encounter_rate"]
