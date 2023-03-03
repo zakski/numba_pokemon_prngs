@@ -6,8 +6,8 @@ import numpy as np
 
 if TYPE_CHECKING:
     U8 = np.uint8
-    U16 = np.uint8
-    U32 = np.uint8
+    U16 = np.uint16
+    U32 = np.uint32
 else:
     U8 = np.dtype("u1")
     U16 = np.dtype("<u2")
