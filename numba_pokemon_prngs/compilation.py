@@ -8,6 +8,7 @@ if USE_NUMBA:
     import numba
     from numba.core.imputils import lower_builtin
     from numba.core.typing.templates import AbstractTemplate, signature, infer_global
+    from numba.types import string as numba_string
 
     # pylint: disable=unused-import,no-name-in-module
     from numba.typed import List as TypedList
@@ -39,11 +40,19 @@ if USE_NUMBA:
 
     def return_type(output_type, input_types):
         """Function that takes inputs and returns the return type based on the output type"""
+        if not hasattr(input_types, "__iter__"):
+            raise TypeError(f"{input_types} is not a iter of inputs")
         output_type = (
             output_type
             if isinstance(output_type, numba.types.Type)
             else (
-                numba.void if output_type == np.void0 else numba.from_dtype(output_type)
+                numba.void
+                if output_type == np.void0
+                else (
+                    numba_string
+                    if output_type == np.str0
+                    else numba.from_dtype(output_type)
+                )
             )
         )
         return output_type(
@@ -134,7 +143,7 @@ def optional_njit(signature_or_function=None, locals=None, **options):
         return numba.njit(
             signature_or_function=signature_or_function,
             locals=convert_spec(locals),
-            **options
+            **options,
         )
 
     # TODO: support @optional_njit w/o arguments provided

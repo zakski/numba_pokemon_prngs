@@ -14,3 +14,17 @@ CONSTANT_CASE_SPECIES_EN = tuple(
     else f"SPECIES_{name.upper()}"
     for name in SPECIES_EN
 )
+
+ABILITIES_EN = tuple(
+    pkg_resources.read_text(txt, "abilities_en.txt", encoding="utf-8").splitlines()
+)
+
+NATURES_EN = tuple(
+    pkg_resources.read_text(txt, "natures_en.txt", encoding="utf-8").splitlines()
+)
+
+TYPES_EN = tuple(
+    pkg_resources.read_text(txt, "types_en.txt", encoding="utf-8").splitlines()
+)
+
+GENDER_SYMBOLS = ("♂", "♀", "-")
