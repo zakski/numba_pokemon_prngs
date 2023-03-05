@@ -4,7 +4,10 @@ import numpy as np
 from ..data.encounter.encounter_area_3 import EncounterArea3, Slot3
 from ..data.personal import PersonalInfo3
 from ..lcrng import PokeRNGMod
-from ..compilation import optional_njit, TypedList
+from ..compilation import (
+    optional_njit,
+    TypedList,
+)
 from ..enums import Encounter, Game, Lead
 
 
@@ -27,6 +30,7 @@ SUPER_ROD_TABLE = compute_table((40, 80, 95, 99, 100))
 ROCK_SMASH_AND_SURF_TABLE = compute_table((60, 90, 95, 99, 100))
 
 hslot_rand = PokeRNGMod.const_rand(100)
+rand_2 = PokeRNGMod.const_rand(2)
 
 
 @optional_njit
@@ -58,7 +62,7 @@ def calculate_hslot_lead(
     """Calculate hslot accounting for magnet pull and static"""
     if (
         (lead == Lead.MAGNET_PULL or lead == Lead.STATIC)
-        and rng.next_rand(2) == 0
+        and rand_2(rng) == 0
         and len(modified_slots) != 0
     ):
         return modified_slots[rng.next_rand(len(modified_slots))]
@@ -66,14 +70,14 @@ def calculate_hslot_lead(
 
 
 @optional_njit
-def calculate_level(slot: Slot3, rng: PokeRNGMod, pressure: bool) -> int:
+def calculate_level(slot: Slot3, rng: PokeRNGMod, pressure: bool) -> np.uint8:
     """Calculate the level of a pokemon taking into account modification from pressure"""
     minimum = slot.min_level
     maximum = slot.max_level
     level_range = maximum - minimum + 1
     rand = rng.next_rand(level_range)
     if pressure:
-        if rng.next_rand(2) == 0:
+        if rand_2(rng) == 0:
             return maximum
         if rand != 0:
             rand -= 1
@@ -81,8 +85,9 @@ def calculate_level(slot: Slot3, rng: PokeRNGMod, pressure: bool) -> int:
 
 
 @optional_njit
-def is_rse_safari_zone(location: int, game: Game) -> bool:
+def is_rse_safari_zone(encounter_area: EncounterArea3, game: Game) -> np.bool_:
     """Check if a locaton is in the RSE safari zone"""
+    location = encounter_area.location
     if game & (Game.RUBY | Game.SAPPHIRE):
         if (
             location == 90
@@ -110,13 +115,16 @@ def is_rse_safari_zone(location: int, game: Game) -> bool:
 
 @optional_njit
 def get_modified_slots(
-    slots: list[Slot3],
+    encounter_area: EncounterArea3,
+    encounter_type: Encounter,
     lead: Lead,
     game: Game,
     personal_info_table: list[PersonalInfo3],
 ):
     """Get modified slots from type-specific leads"""
     encounters = TypedList()
+    # encounters.append(encounter_area.land[0])
+
     if lead == Lead.MAGNET_PULL:
         lead_type = 8
     elif lead == Lead.STATIC:
@@ -146,9 +154,50 @@ def get_modified_slots(
     else:
         return encounters
 
-    for i, slot in enumerate(slots):
-        info: PersonalInfo3 = personal_info_table[slot.species & 0x3FF]
-        if info.type_1 == lead_type or info.type_2 == lead_type:
-            encounters.append(np.uint8(i))
+    # loop has to be repeated or TypedList breaks for some reason
+    if encounter_type == Encounter.OLD_ROD:
+        for slot in encounter_area.fish_old:
+            info: PersonalInfo3 = personal_info_table[slot.species & 0x3FF]
+            if info.type_1 == lead_type or info.type_2 == lead_type:
+                encounters.append(slot)
+    elif encounter_type == Encounter.GOOD_ROD:
+        for slot in encounter_area.fish_good:
+            info: PersonalInfo3 = personal_info_table[slot.species & 0x3FF]
+            if info.type_1 == lead_type or info.type_2 == lead_type:
+                encounters.append(slot)
+    elif encounter_type == Encounter.SUPER_ROD:
+        for slot in encounter_area.fish_super:
+            info: PersonalInfo3 = personal_info_table[slot.species & 0x3FF]
+            if info.type_1 == lead_type or info.type_2 == lead_type:
+                encounters.append(slot)
+    elif encounter_type == Encounter.ROCK_SMASH:
+        for slot in encounter_area.rock:
+            info: PersonalInfo3 = personal_info_table[slot.species & 0x3FF]
+            if info.type_1 == lead_type or info.type_2 == lead_type:
+                encounters.append(slot)
+    elif encounter_type == Encounter.SURFING:
+        for slot in encounter_area.water:
+            info: PersonalInfo3 = personal_info_table[slot.species & 0x3FF]
+            if info.type_1 == lead_type or info.type_2 == lead_type:
+                encounters.append(slot)
+    else:
+        for slot in encounter_area.land:
+            info: PersonalInfo3 = personal_info_table[slot.species & 0x3FF]
+            if info.type_1 == lead_type or info.type_2 == lead_type:
+                encounters.append(slot)
 
     return encounters
+
+
+@optional_njit
+def get_encounter_rate(
+    encounter_area: EncounterArea3, encounter_type: Encounter
+) -> np.uint8:
+    """Get encounter rate"""
+    if encounter_type == Encounter.GRASS:
+        return encounter_area.fish_rate
+    if encounter_type == Encounter.ROCK_SMASH:
+        return encounter_area.rock_rate
+    if encounter_type == Encounter.SURFING:
+        return encounter_area.water_rate
+    return encounter_area.land_rate

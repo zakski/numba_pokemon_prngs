@@ -14,10 +14,14 @@ class Slot3:
     species: U16
 
 
+Slot3.dtype: np.dtype
+
+
 @dtype_dataclass
 class EncounterArea3:
     """Gen 3 Encounter Slot Area"""
 
+    location: U16
     land_rate: U8
     land: Annotated[list[Slot3], dtype_array(Slot3, 12)]
     water_rate: U8

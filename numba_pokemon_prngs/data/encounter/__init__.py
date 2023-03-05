@@ -184,6 +184,7 @@ def load_encounter_3(game: Game) -> tuple[tuple[str], np.recarray]:
         map_names.append(clean_map_string(encounter["map"]))
 
         encounter_area: EncounterArea3 = encounter_information[map_number]
+        encounter_area.location = map_number
 
         land_mons = "land_mons" in encounter
         water_mons = "water_mons" in encounter

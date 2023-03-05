@@ -25,3 +25,15 @@ def get_shiny(pid: np.uint32, tsv: np.uint16):
     if (tsv ^ psv) < 8:
         return 1
     return 0
+
+
+@optional_njit(return_type(np.bool_, (np.uint32, np.uint8)))
+def unown_check(pid: np.uint32, form: np.uint8):
+    """Verify unown form"""
+    letter = (
+        ((pid & 0x3000000) >> 18)
+        | ((pid & 0x30000) >> 12)
+        | ((pid & 0x300) >> 6)
+        | (pid & 0x3)
+    ) % 0x1C
+    return letter == form

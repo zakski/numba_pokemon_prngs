@@ -21,6 +21,7 @@ from .personal_info import (
 )
 from ...enums import Game
 from ...resources.bin import personal as personal_bin_directory
+from ...compilation import optional_njit
 
 
 def load_personal(identifier: str, personal_info: PersonalInfoProtocol) -> np.recarray:
@@ -64,6 +65,16 @@ PERSONAL_INFO_BDSP = load_personal("bdsp", PersonalInfo8BDSP)
 PERSONAL_INFO_LA = load_personal("la", PersonalInfo8LA)
 
 # PERSONAL_INFO_SV = load_personal("sv", PersonalInfo9SV)
+
+
+@optional_njit
+def get_info_table_3(game: Game) -> list[PersonalInfo3]:
+    """Get PersonalInfo Table based on game"""
+    if game & (Game.RUBY | Game.SAPPHIRE):
+        return PERSONAL_INFO_RS
+    if game & (Game.EMERALD):
+        return PERSONAL_INFO_E
+    return PERSONAL_INFO_FR if game & (Game.FIRE_RED) else PERSONAL_INFO_LG
 
 
 def get_info_table(game: Game):
