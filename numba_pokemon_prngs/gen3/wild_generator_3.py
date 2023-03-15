@@ -62,8 +62,6 @@ class WildGenerator3:
     ) -> list[GeneratorState]:
         """Generate states from seed"""
         states = TypedList()
-        modified_slots = TypedList()
-        modified_slots.append(encounter_area.land[0])
         modified_slots = encounter_area_3.get_modified_slots(
             encounter_area,
             self.encounter,

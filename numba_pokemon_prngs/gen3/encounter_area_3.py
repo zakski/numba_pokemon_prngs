@@ -123,7 +123,6 @@ def get_modified_slots(
 ):
     """Get modified slots from type-specific leads"""
     encounters = TypedList()
-    # encounters.append(encounter_area.land[0])
 
     if lead == Lead.MAGNET_PULL:
         lead_type = 8

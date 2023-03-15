@@ -168,7 +168,6 @@ def load_encounter_3(game: Game) -> tuple[tuple[str], np.recarray]:
     )
     map_names = []
     for map_number, encounter in enumerate(encounters):
-
         if re.match(r"gAlteringCave[2-9]", encounter["base_label"]):
             map_names.append("")
             continue
