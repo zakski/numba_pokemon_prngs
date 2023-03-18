@@ -5,9 +5,16 @@ import json
 import importlib.resources as pkg_resources
 import numpy as np
 from .encounter_area_3 import EncounterArea3
+from .encounter_area_la import EncounterAreaLA
+from ..fbs.encounter_la import (
+    EncounterTable8aTable,
+    PlacementSpawner8aTable,
+    EncounterMultiplier8aTable,
+)
 from .. import CONSTANT_CASE_SPECIES_EN
 from ...resources import encount
-from ...enums import Game
+from ...enums import Game, LAArea
+from ...compilation import TypedDict
 
 
 ENCOUNTER_DATA_FILES = {
@@ -252,4 +259,85 @@ ENCOUNTER_INFORMATION_GEN3 = {
     Game.EMERALD: ENCOUNTER_INFORMATION_EMERALD,
     Game.FIRE_RED: ENCOUNTER_INFORMATION_FIRE_RED,
     Game.LEAF_GREEN: ENCOUNTER_INFORMATION_LEAF_GREEN,
+}
+
+
+def load_encounter_tables_la(map_area: LAArea):
+    """Load encounter tables for a map in Pokemon: Legends Arceus"""
+    map_encounter_area_lookup = TypedDict(
+        key_type=np.uint64, value_type=EncounterAreaLA
+    )
+    flatbuffer_encounter_lookup = EncounterTable8aTable(
+        pkg_resources.read_binary(encount.la, f"ha_area{map_area:02d}_encounter.bin")
+    ).encounter_tables
+    for encounter_area_fb in flatbuffer_encounter_lookup:
+        encounter_area = EncounterAreaLA(
+            np.uint64(encounter_area_fb.table_id),
+            len(encounter_area_fb.encounter_slots),
+        )
+        encounter_area_slots = encounter_area.slots.view(np.recarray)
+        for i, slot in enumerate(encounter_area_fb.encounter_slots):
+            encounter_area_slots[i].species = slot.species
+            encounter_area_slots[i].form = slot.form or 0
+            encounter_area_slots[i].base_probability = slot.base_probability
+            # bake multipliers into encounter area table
+
+            encounter_area_slots[i].time_multipliers = np.where(
+                # if multiplier < 0 (-1.0), use species specific multiplier
+                np.array(slot.encounter_eligibility.time_of_day_multipliers) < 0.0,
+                ENCOUNTER_MULTIPLIER_LA.multiplier_lookup[
+                    (slot.species, slot.form or 0)
+                ].time_of_day_multipliers,
+                slot.encounter_eligibility.time_of_day_multipliers,
+            )
+            encounter_area_slots[i].time_multipliers = np.where(
+                # if species specific multiplier < 0 (-1.0), use 1.0
+                encounter_area_slots[i].time_multipliers < 0.0,
+                1.0,
+                encounter_area_slots[i].time_multipliers,
+            )
+            encounter_area_slots[i].weather_multipliers = np.where(
+                # if multiplier < 0 (-1.0), use species specific multiplier
+                np.array(slot.encounter_eligibility.weather_multipliers) < 0.0,
+                ENCOUNTER_MULTIPLIER_LA.multiplier_lookup[
+                    (slot.species, slot.form or 0)
+                ].weather_multipliers,
+                slot.encounter_eligibility.weather_multipliers,
+            )
+            encounter_area_slots[i].weather_multipliers = np.where(
+                # if species specific multiplier < 0 (-1.0), use 1.0
+                encounter_area_slots[i].weather_multipliers < 0.0,
+                1.0,
+                encounter_area_slots[i].weather_multipliers,
+            )
+        map_encounter_area_lookup[np.uint64(encounter_area.table_id)] = encounter_area
+    return map_encounter_area_lookup
+
+
+ENCOUNTER_MULTIPLIER_LA = EncounterMultiplier8aTable(
+    pkg_resources.read_binary(encount.la, "poke_encount.bin")
+)
+
+ENCOUNTER_INFORMATION_LA = {
+    map_area: load_encounter_tables_la(map_area)
+    for map_area in (
+        LAArea.OBSIDIAN_FIELDLANDS,
+        LAArea.CRIMSON_MIRELANDS,
+        LAArea.CORONET_HIGHLANDS,
+        LAArea.COBALT_COASTLANDS,
+        LAArea.ALABASTER_ICELANDS,
+    )
+}
+
+SPAWNER_INFORMATION_LA = {
+    map_area: PlacementSpawner8aTable(
+        pkg_resources.read_binary(encount.la, f"ha_area{map_area:02d}_spawner.bin")
+    )
+    for map_area in (
+        LAArea.OBSIDIAN_FIELDLANDS,
+        LAArea.CRIMSON_MIRELANDS,
+        LAArea.CORONET_HIGHLANDS,
+        LAArea.COBALT_COASTLANDS,
+        LAArea.ALABASTER_ICELANDS,
+    )
 }
