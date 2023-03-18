@@ -343,5 +343,53 @@ SPAWNER_INFORMATION_LA = {
     )
 }
 
-SPAWNER_NAMES_LA = {fnv1a_64(f"grp{i:02d}"): f"grp{i:02d}" for i in range(100)}
-SPAWNER_NAMES_LA.update({fnv1a_64(f"grp_{i:02d}"): f"grp_{i:02d}" for i in range(100)})
+SPAWNER_NAMES_LA = {}
+for i in range(10000):
+    SPAWNER_NAMES_LA[fnv1a_64(f"{i:04d}")] = f"{i:04d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"1{i:04d}")] = f"1{i:04d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"02{i:04d}")] = f"02{i:04d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"03{i:04d}")] = f"03{i:04d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"4{i:04d}")] = f"4{i:04d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"5{i:04d}")] = f"5{i:04d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"ev{i:04d}")] = f"ev{i:04d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"ex_{i:04d}")] = f"ex_{i:04d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"eve_ex_{i:04d}")] = f"eve_ex_{i:04d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"huge_{i:04d}")] = f"huge_{i:04d}"
+    for j in range(20):
+        SPAWNER_NAMES_LA[fnv1a_64(f"{i:04d}_{j:02d}")] = f"{i:04d}_{j:02d}"
+for i in range(100):
+    SPAWNER_NAMES_LA[fnv1a_64(f"area00_{i:02d}")] = f"area00_{i:02d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"poke{i:02d}")] = f"poke{i:02d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"sky{i:02d}")] = f"sky{i:02d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"lnd_no_{i:02d}")] = f"lnd_no_{i:02d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"sky_{i:02d}")] = f"sky_{i:02d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"ex_mkrg_{i:02d}")] = f"ex_mkrg_{i:02d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"ex_unnn_{i:02d}")] = f"ex_unnn_{i:02d}"
+    SPAWNER_NAMES_LA[fnv1a_64(f"ex_trs_{i:02d}")] = f"ex_trs_{i:02d}"
+
+SPAWNER_NAMES_LA["ha_area01_s01_ev001"] = "ha_area01_s01_ev001"
+SPAWNER_NAMES_LA["ha_area02_s02_ev001"] = "ha_area02_s02_ev001"
+SPAWNER_NAMES_LA["ha_area02_s02_ev002"] = "ha_area02_s02_ev002"
+SPAWNER_NAMES_LA["ha_area03_s03_ev001"] = "ha_area03_s03_ev001"
+SPAWNER_NAMES_LA["ha_area04_ev001"] = "ha_area04_ev001"
+SPAWNER_NAMES_LA["ha_area05_s03_ev001"] = "ha_area05_s03_ev001"
+
+SPAWNER_NAMES_LA["area03_s04_ev001"] = "area03_s04_ev001"
+SPAWNER_NAMES_LA["area03_s04_ev002"] = "area03_s04_ev002"
+SPAWNER_NAMES_LA["area03_s04_ev003"] = "area03_s04_ev003"
+SPAWNER_NAMES_LA["area03_s04_ev003"] = "area03_s04_ev003"
+SPAWNER_NAMES_LA["area03_s04_ev005"] = "area03_s04_ev005"
+
+SPAWNER_NAMES_LA["ha_area01_s01_1000"] = "ha_area01_s01_1000"
+SPAWNER_NAMES_LA["ha_area02_s02_1000"] = "ha_area02_s02_1000"
+SPAWNER_NAMES_LA["ha_area05_s03_1000"] = "ha_area05_s03_1000"
+
+for i in range(1, 8):
+    for j in range(1, 4):
+        for k in range(1, 7):
+            SPAWNER_NAMES_LA[
+                f"main_whSpawner{i:02d}{j:02d}_{k:02d}"
+            ] = f"main_whSpawner{i:02d}{j:02d}_{k:02d}"
+            SPAWNER_NAMES_LA[
+                f"sub_whSpawner{i:02d}{j:02d}_{k:02d}"
+            ] = f"sub_whSpawner{i:02d}{j:02d}_{k:02d}"
