@@ -397,9 +397,10 @@ for i in range(1, 8):
 ENCOUNTER_TABLE_NAMES_LA = {}
 for prefix in ("eve", "fly", "gmk", "lnd", "mas", "oyb", "swm", "whl"):
     for kind in ("ex", "no", "ra"):
-        ENCOUNTER_TABLE_NAMES_LA[
-            fnv1a_64(f"{prefix}_{kind}_{i:02d}")
-        ] = f"{prefix}_{kind}_{i:02d}"
+        for i in range(150):
+            ENCOUNTER_TABLE_NAMES_LA[
+                fnv1a_64(f"{prefix}_{kind}_{i:02d}")
+            ] = f"{prefix}_{kind}_{i:02d}"
 for area in range(6):
     for i in range(10):
         ENCOUNTER_TABLE_NAMES_LA[
