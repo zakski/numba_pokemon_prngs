@@ -367,22 +367,22 @@ for i in range(100):
     SPAWNER_NAMES_LA[fnv1a_64(f"ex_unnn_{i:02d}")] = f"ex_unnn_{i:02d}"
     SPAWNER_NAMES_LA[fnv1a_64(f"ex_trs_{i:02d}")] = f"ex_trs_{i:02d}"
 
-SPAWNER_NAMES_LA["ha_area01_s01_ev001"] = "ha_area01_s01_ev001"
-SPAWNER_NAMES_LA["ha_area02_s02_ev001"] = "ha_area02_s02_ev001"
-SPAWNER_NAMES_LA["ha_area02_s02_ev002"] = "ha_area02_s02_ev002"
-SPAWNER_NAMES_LA["ha_area03_s03_ev001"] = "ha_area03_s03_ev001"
-SPAWNER_NAMES_LA["ha_area04_ev001"] = "ha_area04_ev001"
-SPAWNER_NAMES_LA["ha_area05_s03_ev001"] = "ha_area05_s03_ev001"
+SPAWNER_NAMES_LA[fnv1a_64("ha_area01_s01_ev001")] = "ha_area01_s01_ev001"
+SPAWNER_NAMES_LA[fnv1a_64("ha_area02_s02_ev001")] = "ha_area02_s02_ev001"
+SPAWNER_NAMES_LA[fnv1a_64("ha_area02_s02_ev002")] = "ha_area02_s02_ev002"
+SPAWNER_NAMES_LA[fnv1a_64("ha_area03_s03_ev001")] = "ha_area03_s03_ev001"
+SPAWNER_NAMES_LA[fnv1a_64("ha_area04_ev001")] = "ha_area04_ev001"
+SPAWNER_NAMES_LA[fnv1a_64("ha_area05_s03_ev001")] = "ha_area05_s03_ev001"
 
-SPAWNER_NAMES_LA["area03_s04_ev001"] = "area03_s04_ev001"
-SPAWNER_NAMES_LA["area03_s04_ev002"] = "area03_s04_ev002"
-SPAWNER_NAMES_LA["area03_s04_ev003"] = "area03_s04_ev003"
-SPAWNER_NAMES_LA["area03_s04_ev003"] = "area03_s04_ev003"
-SPAWNER_NAMES_LA["area03_s04_ev005"] = "area03_s04_ev005"
+SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev001")] = "area03_s04_ev001"
+SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev002")] = "area03_s04_ev002"
+SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev003")] = "area03_s04_ev003"
+SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev003")] = "area03_s04_ev003"
+SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev005")] = "area03_s04_ev005"
 
-SPAWNER_NAMES_LA["ha_area01_s01_1000"] = "ha_area01_s01_1000"
-SPAWNER_NAMES_LA["ha_area02_s02_1000"] = "ha_area02_s02_1000"
-SPAWNER_NAMES_LA["ha_area05_s03_1000"] = "ha_area05_s03_1000"
+SPAWNER_NAMES_LA[fnv1a_64("ha_area01_s01_1000")] = "ha_area01_s01_1000"
+SPAWNER_NAMES_LA[fnv1a_64("ha_area02_s02_1000")] = "ha_area02_s02_1000"
+SPAWNER_NAMES_LA[fnv1a_64("ha_area05_s03_1000")] = "ha_area05_s03_1000"
 
 for i in range(1, 8):
     for j in range(1, 4):
@@ -393,3 +393,32 @@ for i in range(1, 8):
             SPAWNER_NAMES_LA[
                 f"sub_whSpawner{i:02d}{j:02d}_{k:02d}"
             ] = f"sub_whSpawner{i:02d}{j:02d}_{k:02d}"
+
+ENCOUNTER_TABLE_NAMES_LA = {}
+for prefix in ("eve", "fly", "gmk", "lnd", "mas", "oyb", "swm", "whl"):
+    for kind in ("ex", "no", "ra"):
+        ENCOUNTER_TABLE_NAMES_LA[
+            fnv1a_64(f"{prefix}_{kind}_{i:02d}")
+        ] = f"{prefix}_{kind}_{i:02d}"
+for area in range(6):
+    for i in range(10):
+        ENCOUNTER_TABLE_NAMES_LA[
+            fnv1a_64(f"sky_area{area}_{i:02d}")
+        ] = f"sky_area{area}_{i:02d}"
+ENCOUNTER_TABLE_NAMES_LA[fnv1a_64("eve_ex_16_b")] = "eve_ex_16_b"
+ENCOUNTER_TABLE_NAMES_LA[fnv1a_64("eve_ex_17_b")] = "eve_ex_17_b"
+ENCOUNTER_TABLE_NAMES_LA[fnv1a_64("eve_ex_18_b")] = "eve_ex_18_b"
+
+for gimmick in ("no", "tree", "rock", "crystal", "snow", "box"):
+    for i in range(100):
+        ENCOUNTER_TABLE_NAMES_LA[
+            fnv1a_64(f"gmk_{gimmick}_{i:02d}")
+        ] = f"gmk_{gimmick}_{i:02d}"
+        for j in range(3):
+            ENCOUNTER_TABLE_NAMES_LA[
+                fnv1a_64(f"gmk_{gimmick}_{i:02d}_{j:02d}")
+            ] = f"gmk_{gimmick}_{i:02d}_{j:02d}"
+            for k in range(3):
+                ENCOUNTER_TABLE_NAMES_LA[
+                    fnv1a_64(f"gmk_{gimmick}_{i:02d}_{j:02d}_{k:02d}")
+                ] = f"gmk_{gimmick}_{i:02d}_{j:02d}_{k:02d}"
