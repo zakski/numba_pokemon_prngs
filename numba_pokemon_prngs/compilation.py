@@ -80,16 +80,14 @@ if USE_NUMBA:
     def convert_spec(spec):
         """Convert a spec containing numpy types to use numba types"""
         for attr, py_type in spec.copy().items():
-            if not isinstance(py_type, numba.types.Type):
-                spec[attr] = numba.from_dtype(py_type)
+            spec[attr] = convert_to_numba(py_type)
         return spec
 
     def convert_spec_cls(spec, cls):
         """Convert a spec built from type hints containing numpy types to use numba types"""
         spec = spec or {}
         for attr, py_type in get_type_hints(cls).items():
-            if attr not in spec and not isinstance(py_type, numba.types.Type):
-                spec[attr] = numba.from_dtype(py_type)
+            spec[attr] = convert_to_numba(py_type)
         return spec
 
 else:
