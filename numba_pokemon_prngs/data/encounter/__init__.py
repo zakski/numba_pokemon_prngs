@@ -280,7 +280,6 @@ def load_encounter_tables_la(map_area: LAArea):
         for i, slot in enumerate(encounter_area_fb.encounter_slots):
             encounter_area_slots[i].species = slot.species
             encounter_area_slots[i].form = slot.form or 0
-            encounter_area_slots[i].base_probability = slot.base_probability
             encounter_area_slots[i].min_level = (
                 slot.override_min_level
                 if 0 < slot.override_min_level <= 100
@@ -291,6 +290,8 @@ def load_encounter_tables_la(map_area: LAArea):
                 if 0 < slot.override_max_level <= 100
                 else encounter_area_fb.max_level
             )
+            encounter_area_slots[i].base_probability = slot.base_probability
+            encounter_area_slots[i].is_alpha = slot.is_alpha
             # bake multipliers into encounter area table
 
             encounter_area_slots[i].time_multipliers = np.where(
