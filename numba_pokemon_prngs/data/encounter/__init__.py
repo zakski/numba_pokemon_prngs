@@ -343,6 +343,6 @@ SPAWNER_INFORMATION_LA = {
     )
 }
 
-SPAWNER_NAMES = {fnv1a_64(f"grp{i:02d}"): f"grp{i:02d}" for i in range(100)} + {
+SPAWNER_NAMES_LA = {fnv1a_64(f"grp{i:02d}"): f"grp{i:02d}" for i in range(100)} + {
     fnv1a_64(f"grp_{i:02d}"): f"grp_{i:02d}" for i in range(100)
 }
