@@ -15,6 +15,7 @@ from .. import CONSTANT_CASE_SPECIES_EN
 from ...resources import encount
 from ...enums import Game, LAArea
 from ...compilation import TypedDict
+from ...fnv import fnv1a_64
 
 
 ENCOUNTER_DATA_FILES = {
@@ -340,4 +341,8 @@ SPAWNER_INFORMATION_LA = {
         LAArea.COBALT_COASTLANDS,
         LAArea.ALABASTER_ICELANDS,
     )
+}
+
+SPAWNER_NAMES = {fnv1a_64(f"grp{i:02d}"): f"grp{i:02d}" for i in range(100)} + {
+    fnv1a_64(f"grp_{i:02d}"): f"grp_{i:02d}" for i in range(100)
 }
