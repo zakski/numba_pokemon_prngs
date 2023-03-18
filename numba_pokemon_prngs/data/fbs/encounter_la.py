@@ -135,8 +135,8 @@ class EncounterSlot8a(FlatBufferObject):
         self.guaranteed_ivs: np.int32 = self.read_init_int(I32)
         self.read_init_padding(3)
         self.base_probability: np.int32 = self.read_init_int(I32)
-        self.override_min_level: np.int32 = self.read_init_int(I32)
-        self.override_max_level: np.int32 = self.read_init_int(I32)
+        self.override_min_level: np.int32 = self.read_init_int(I32, 0)
+        self.override_max_level: np.int32 = self.read_init_int(I32, 0)
         self.read_init_padding(13)
         self.encounter_eligibility: EncounterEligibilityTraits8a = (
             self.read_init_object(EncounterEligibilityTraits8a)
