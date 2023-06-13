@@ -10,6 +10,7 @@ from ..fbs.encounter_la import (
     EncounterTable8aTable,
     PlacementSpawner8aTable,
     EncounterMultiplier8aTable,
+    PokeMisc8aTable
 )
 from .. import CONSTANT_CASE_SPECIES_EN
 from ...resources import encount
@@ -294,6 +295,12 @@ def load_encounter_tables_la(map_area: LAArea):
             )
             encounter_area_slots[i].base_probability = slot.base_probability
             encounter_area_slots[i].is_alpha = slot.is_alpha
+            # apply OYBN level range boosts
+            if slot.is_alpha:
+                poke_misc_data = POKE_MISC_LA.misc_lookup[(slot.species, slot.form or 0)]
+                level_boost = ALPHA_LEVEL_BOOSTS_LA[poke_misc_data.alpha_level_index - 1]
+                encounter_area_slots[i].min_level += level_boost
+                encounter_area_slots[i].max_level += level_boost
             # bake multipliers into encounter area table
 
             encounter_area_slots[i].time_multipliers = np.where(
@@ -331,6 +338,12 @@ def load_encounter_tables_la(map_area: LAArea):
 ENCOUNTER_MULTIPLIER_LA = EncounterMultiplier8aTable(
     pkg_resources.read_binary(encount.la, "poke_encount.bin")
 )
+
+POKE_MISC_LA = PokeMisc8aTable(
+    pkg_resources.read_binary(encount.la, "poke_misc.bin")
+)
+
+ALPHA_LEVEL_BOOSTS_LA = (15, 15, 15, 20, 20)
 
 ENCOUNTER_INFORMATION_LA = {
     map_area: load_encounter_tables_la(map_area)

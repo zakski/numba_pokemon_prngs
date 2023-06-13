@@ -42,6 +42,31 @@ class EncounterMultiplier8a(FlatBufferObject):
         ] = (1.0,) + tuple(self.read_init_float(F32, default=0.0) for _ in range(8))
 
 
+class PokeMisc8aTable(FlatBufferObject):
+    """Array of miscellaneous pokemon information (root object)"""
+
+    def __init__(self, buf: bytearray):
+        FlatBufferObject.__init__(self, buf)
+        self.misc_list: List[
+            PokeMisc8a
+        ] = self.read_init_object_array(PokeMisc8a)
+        self.misc_lookup: Dict[Tuple[int, int], PokeMisc8a] = {
+            (misc.species, misc.form or 0): misc
+            for misc in self.misc_list
+        }
+
+
+class PokeMisc8a(FlatBufferObject):
+    """Miscellaneous pokemon information"""
+
+    def __init__(self, buf: bytearray, offset: int):
+        super().__init__(buf, offset)
+        self.species: np.int32 = self.read_init_int(I32)
+        self.form: np.int32 = self.read_init_int(I32, 0)
+        self.read_init_padding(4)
+        self.alpha_level_index: np.int32 = self.read_init_int(I32, 0)
+        # self.read_init_padding(16)
+
 class PlacementSpawner8aTable(FlatBufferObject):
     """Array of Spawner specifications (root object)"""
 
