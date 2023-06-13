@@ -129,7 +129,8 @@ class EncounterSlot8a(FlatBufferObject):
     def __init__(self, buf: bytearray, offset: int):
         super().__init__(buf, offset)
         self.species: np.int32 = self.read_init_int(I32)
-        self.read_init_padding(2)
+        self.read_init_padding(1) # slot id
+        self.gender: np.int32 = self.read_init_int(I32, -1)
         self.form: np.int32 = self.read_init_int(I32)
         self.read_init_padding(21)
         self.guaranteed_ivs: np.int32 = self.read_init_int(I32)

@@ -12,6 +12,7 @@ class SlotLA:
     """Pokemon: Legends Arceus Encounter Slot"""
 
     species: U16
+    gender: U8
     form: U8
     min_level: U8
     max_level: U8
