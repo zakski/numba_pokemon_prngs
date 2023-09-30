@@ -2,8 +2,11 @@
 
 import re
 import json
+import pickle
+import os
 import importlib.resources as pkg_resources
 import numpy as np
+from platformdirs import user_cache_dir
 from .encounter_area_3 import EncounterArea3
 from .encounter_area_la import EncounterAreaLA
 from ..fbs.encounter_la import (
@@ -18,6 +21,32 @@ from ...enums import Game, LAArea
 from ...compilation import TypedDict
 from ...fnv import fnv1a_64
 
+def pickle_cached(filename: str, encode = None, decode = None):
+    """Cache results of a function next to the executable"""
+    cache_dir = user_cache_dir("numba_pokemon_prngs", "Lincoln-LM")
+    filename = cache_dir + "/" + filename
+    if not os.path.exists(cache_dir):
+        os.mkdir(cache_dir)
+    def wrapper(function):
+        def wrapped(*args, **kwargs):
+            pkl_filename = filename.format(*args, **kwargs)
+            if os.path.exists(pkl_filename):
+                with open(pkl_filename, "rb") as pickled_file:
+                    data = pickled_file.read()
+                    if data:
+                        data = pickle.loads(data)
+                        if decode is not None:
+                            return decode(data)
+                        return data
+            result = function(*args, **kwargs)
+            with open(pkl_filename, "wb+") as pickled_file:
+                if encode is not None:
+                    pickled_file.write(pickle.dumps(encode(result)))
+                else:
+                    pickle.dump(result, pickled_file)
+            return result
+        return wrapped
+    return wrapper
 
 ENCOUNTER_DATA_FILES = {
     Game.RUBY: "rs_wild_encounters.json",
@@ -154,6 +183,7 @@ def clean_map_string(map_string: str) -> str:
     return " ".join(strings)
 
 
+@pickle_cached("encounter_3_{}.pkl")
 def load_encounter_3(game: Game) -> tuple[tuple[str], np.recarray]:
     """Load Gen 3 encounter data"""
     with pkg_resources.open_text(
@@ -263,7 +293,29 @@ ENCOUNTER_INFORMATION_GEN3 = {
     Game.LEAF_GREEN: ENCOUNTER_INFORMATION_LEAF_GREEN,
 }
 
+def encounter_tables_la_decode(regular_dict):
+    map_encounter_area_lookup = TypedDict(
+        key_type=np.uint64, value_type=EncounterAreaLA
+    )
+    for key, value in regular_dict.items():
+        table_id, slots = value
+        value = EncounterAreaLA(np.uint64(table_id), len(slots))
+        value.slots = slots
+        map_encounter_area_lookup[np.uint64(key)] = value
+    return map_encounter_area_lookup
 
+def encounter_tables_la_encode(typed_dict):
+    regular_dict = {}
+    for key in typed_dict.keys():
+        value = typed_dict[np.uint64(key)]
+        regular_dict[int(key)] = (value.table_id, value.slots)
+    return regular_dict
+
+@pickle_cached(
+    "encounter_tables_la_{}.pkl",
+    encode=encounter_tables_la_encode,
+    decode=encounter_tables_la_decode
+)
 def load_encounter_tables_la(map_area: LAArea):
     """Load encounter tables for a map in Pokemon: Legends Arceus"""
     map_encounter_area_lookup = TypedDict(
@@ -369,83 +421,93 @@ SPAWNER_INFORMATION_LA = {
     )
 }
 
-SPAWNER_NAMES_LA = {}
-for i in range(10000):
-    SPAWNER_NAMES_LA[fnv1a_64(f"{i:04d}")] = f"{i:04d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"1{i:04d}")] = f"1{i:04d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"02{i:04d}")] = f"02{i:04d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"03{i:04d}")] = f"03{i:04d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"4{i:04d}")] = f"4{i:04d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"5{i:04d}")] = f"5{i:04d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"ev{i:04d}")] = f"ev{i:04d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"ex_{i:04d}")] = f"ex_{i:04d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"eve_ex_{i:04d}")] = f"eve_ex_{i:04d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"huge_{i:04d}")] = f"huge_{i:04d}"
-    for j in range(20):
-        SPAWNER_NAMES_LA[fnv1a_64(f"{i:04d}_{j:02d}")] = f"{i:04d}_{j:02d}"
-for i in range(100):
-    SPAWNER_NAMES_LA[fnv1a_64(f"area00_{i:02d}")] = f"area00_{i:02d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"poke{i:02d}")] = f"poke{i:02d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"sky{i:02d}")] = f"sky{i:02d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"lnd_no_{i:02d}")] = f"lnd_no_{i:02d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"sky_{i:02d}")] = f"sky_{i:02d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"ex_mkrg_{i:02d}")] = f"ex_mkrg_{i:02d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"ex_unnn_{i:02d}")] = f"ex_unnn_{i:02d}"
-    SPAWNER_NAMES_LA[fnv1a_64(f"ex_trs_{i:02d}")] = f"ex_trs_{i:02d}"
+SPAWNER_NAMES_LA = json.loads(
+    pkg_resources.read_text(encount.la, "spawner_names.json"),
+    object_hook=lambda x: {int(k): v for k,v in x.items()}
+)
 
-SPAWNER_NAMES_LA[fnv1a_64("ha_area01_s01_ev001")] = "ha_area01_s01_ev001"
-SPAWNER_NAMES_LA[fnv1a_64("ha_area02_s02_ev001")] = "ha_area02_s02_ev001"
-SPAWNER_NAMES_LA[fnv1a_64("ha_area02_s02_ev002")] = "ha_area02_s02_ev002"
-SPAWNER_NAMES_LA[fnv1a_64("ha_area03_s03_ev001")] = "ha_area03_s03_ev001"
-SPAWNER_NAMES_LA[fnv1a_64("ha_area04_ev001")] = "ha_area04_ev001"
-SPAWNER_NAMES_LA[fnv1a_64("ha_area05_s03_ev001")] = "ha_area05_s03_ev001"
+ENCOUNTER_TABLE_NAMES_LA = json.loads(
+    pkg_resources.read_text(encount.la, "spawner_names.json"),
+    object_hook=lambda x: {int(k): v for k,v in x.items()}
+)
 
-SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev001")] = "area03_s04_ev001"
-SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev002")] = "area03_s04_ev002"
-SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev003")] = "area03_s04_ev003"
-SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev003")] = "area03_s04_ev003"
-SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev005")] = "area03_s04_ev005"
+# SPAWNER_NAMES_LA = {}
+# for i in range(10000):
+#     SPAWNER_NAMES_LA[fnv1a_64(f"{i:04d}")] = f"{i:04d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"1{i:04d}")] = f"1{i:04d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"02{i:04d}")] = f"02{i:04d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"03{i:04d}")] = f"03{i:04d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"4{i:04d}")] = f"4{i:04d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"5{i:04d}")] = f"5{i:04d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"ev{i:04d}")] = f"ev{i:04d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"ex_{i:04d}")] = f"ex_{i:04d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"eve_ex_{i:04d}")] = f"eve_ex_{i:04d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"huge_{i:04d}")] = f"huge_{i:04d}"
+#     for j in range(20):
+#         SPAWNER_NAMES_LA[fnv1a_64(f"{i:04d}_{j:02d}")] = f"{i:04d}_{j:02d}"
+# for i in range(100):
+#     SPAWNER_NAMES_LA[fnv1a_64(f"area00_{i:02d}")] = f"area00_{i:02d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"poke{i:02d}")] = f"poke{i:02d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"sky{i:02d}")] = f"sky{i:02d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"lnd_no_{i:02d}")] = f"lnd_no_{i:02d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"sky_{i:02d}")] = f"sky_{i:02d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"ex_mkrg_{i:02d}")] = f"ex_mkrg_{i:02d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"ex_unnn_{i:02d}")] = f"ex_unnn_{i:02d}"
+#     SPAWNER_NAMES_LA[fnv1a_64(f"ex_trs_{i:02d}")] = f"ex_trs_{i:02d}"
 
-SPAWNER_NAMES_LA[fnv1a_64("ha_area01_s01_1000")] = "ha_area01_s01_1000"
-SPAWNER_NAMES_LA[fnv1a_64("ha_area02_s02_1000")] = "ha_area02_s02_1000"
-SPAWNER_NAMES_LA[fnv1a_64("ha_area05_s03_1000")] = "ha_area05_s03_1000"
+# SPAWNER_NAMES_LA[fnv1a_64("ha_area01_s01_ev001")] = "ha_area01_s01_ev001"
+# SPAWNER_NAMES_LA[fnv1a_64("ha_area02_s02_ev001")] = "ha_area02_s02_ev001"
+# SPAWNER_NAMES_LA[fnv1a_64("ha_area02_s02_ev002")] = "ha_area02_s02_ev002"
+# SPAWNER_NAMES_LA[fnv1a_64("ha_area03_s03_ev001")] = "ha_area03_s03_ev001"
+# SPAWNER_NAMES_LA[fnv1a_64("ha_area04_ev001")] = "ha_area04_ev001"
+# SPAWNER_NAMES_LA[fnv1a_64("ha_area05_s03_ev001")] = "ha_area05_s03_ev001"
 
-for i in range(1, 8):
-    for j in range(1, 4):
-        for k in range(1, 7):
-            SPAWNER_NAMES_LA[
-                f"main_whSpawner{i:02d}{j:02d}_{k:02d}"
-            ] = f"main_whSpawner{i:02d}{j:02d}_{k:02d}"
-            SPAWNER_NAMES_LA[
-                f"sub_whSpawner{i:02d}{j:02d}_{k:02d}"
-            ] = f"sub_whSpawner{i:02d}{j:02d}_{k:02d}"
+# SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev001")] = "area03_s04_ev001"
+# SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev002")] = "area03_s04_ev002"
+# SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev003")] = "area03_s04_ev003"
+# SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev003")] = "area03_s04_ev003"
+# SPAWNER_NAMES_LA[fnv1a_64("area03_s04_ev005")] = "area03_s04_ev005"
 
-ENCOUNTER_TABLE_NAMES_LA = {}
-for prefix in ("eve", "fly", "gmk", "lnd", "mas", "oyb", "swm", "whl"):
-    for kind in ("ex", "no", "ra"):
-        for i in range(150):
-            ENCOUNTER_TABLE_NAMES_LA[
-                fnv1a_64(f"{prefix}_{kind}_{i:02d}")
-            ] = f"{prefix}_{kind}_{i:02d}"
-for area in range(6):
-    for i in range(10):
-        ENCOUNTER_TABLE_NAMES_LA[
-            fnv1a_64(f"sky_area{area}_{i:02d}")
-        ] = f"sky_area{area}_{i:02d}"
-ENCOUNTER_TABLE_NAMES_LA[fnv1a_64("eve_ex_16_b")] = "eve_ex_16_b"
-ENCOUNTER_TABLE_NAMES_LA[fnv1a_64("eve_ex_17_b")] = "eve_ex_17_b"
-ENCOUNTER_TABLE_NAMES_LA[fnv1a_64("eve_ex_18_b")] = "eve_ex_18_b"
+# SPAWNER_NAMES_LA[fnv1a_64("ha_area01_s01_1000")] = "ha_area01_s01_1000"
+# SPAWNER_NAMES_LA[fnv1a_64("ha_area02_s02_1000")] = "ha_area02_s02_1000"
+# SPAWNER_NAMES_LA[fnv1a_64("ha_area05_s03_1000")] = "ha_area05_s03_1000"
 
-for gimmick in ("no", "tree", "rock", "crystal", "snow", "box"):
-    for i in range(100):
-        ENCOUNTER_TABLE_NAMES_LA[
-            fnv1a_64(f"gmk_{gimmick}_{i:02d}")
-        ] = f"gmk_{gimmick}_{i:02d}"
-        for j in range(3):
-            ENCOUNTER_TABLE_NAMES_LA[
-                fnv1a_64(f"gmk_{gimmick}_{i:02d}_{j:02d}")
-            ] = f"gmk_{gimmick}_{i:02d}_{j:02d}"
-            for k in range(3):
-                ENCOUNTER_TABLE_NAMES_LA[
-                    fnv1a_64(f"gmk_{gimmick}_{i:02d}_{j:02d}_{k:02d}")
-                ] = f"gmk_{gimmick}_{i:02d}_{j:02d}_{k:02d}"
+# for i in range(1, 8):
+#     for j in range(1, 4):
+#         for k in range(1, 7):
+#             SPAWNER_NAMES_LA[
+#                 fnv1a_64(f"main_whSpawner{i:02d}{j:02d}_{k:02d}")
+#             ] = f"main_whSpawner{i:02d}{j:02d}_{k:02d}"
+#             SPAWNER_NAMES_LA[
+#                 fnv1a_64(f"sub_whSpawner{i:02d}{j:02d}_{k:02d}")
+#             ] = f"sub_whSpawner{i:02d}{j:02d}_{k:02d}"
+
+# ENCOUNTER_TABLE_NAMES_LA = {}
+# for prefix in ("eve", "fly", "gmk", "lnd", "mas", "oyb", "swm", "whl"):
+#     for kind in ("ex", "no", "ra"):
+#         for i in range(150):
+#             ENCOUNTER_TABLE_NAMES_LA[
+#                 fnv1a_64(f"{prefix}_{kind}_{i:02d}")
+#             ] = f"{prefix}_{kind}_{i:02d}"
+# for area in range(6):
+#     for i in range(10):
+#         ENCOUNTER_TABLE_NAMES_LA[
+#             fnv1a_64(f"sky_area{area}_{i:02d}")
+#         ] = f"sky_area{area}_{i:02d}"
+# ENCOUNTER_TABLE_NAMES_LA[fnv1a_64("eve_ex_16_b")] = "eve_ex_16_b"
+# ENCOUNTER_TABLE_NAMES_LA[fnv1a_64("eve_ex_17_b")] = "eve_ex_17_b"
+# ENCOUNTER_TABLE_NAMES_LA[fnv1a_64("eve_ex_18_b")] = "eve_ex_18_b"
+
+# for gimmick in ("no", "tree", "rock", "crystal", "snow", "box"):
+#     for i in range(100):
+#         ENCOUNTER_TABLE_NAMES_LA[
+#             fnv1a_64(f"gmk_{gimmick}_{i:02d}")
+#         ] = f"gmk_{gimmick}_{i:02d}"
+#         for j in range(3):
+#             ENCOUNTER_TABLE_NAMES_LA[
+#                 fnv1a_64(f"gmk_{gimmick}_{i:02d}_{j:02d}")
+#             ] = f"gmk_{gimmick}_{i:02d}_{j:02d}"
+#             for k in range(3):
+#                 ENCOUNTER_TABLE_NAMES_LA[
+#                     fnv1a_64(f"gmk_{gimmick}_{i:02d}_{j:02d}_{k:02d}")
+#                 ] = f"gmk_{gimmick}_{i:02d}_{j:02d}_{k:02d}"
