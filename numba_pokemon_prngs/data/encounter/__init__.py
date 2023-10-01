@@ -4,6 +4,7 @@ import re
 import json
 import pickle
 import os
+import pathlib
 import importlib.resources as pkg_resources
 import numpy as np
 from platformdirs import user_cache_dir
@@ -25,8 +26,7 @@ def pickle_cached(filename: str, encode = None, decode = None):
     """Cache results of a function next to the executable"""
     cache_dir = user_cache_dir("numba_pokemon_prngs", "Lincoln-LM")
     filename = cache_dir + "/" + filename
-    if not os.path.exists(cache_dir):
-        os.mkdir(cache_dir)
+    pathlib.Path(cache_dir).mkdir(parents=True, exist_ok=True)
     def wrapper(function):
         def wrapped(*args, **kwargs):
             pkl_filename = filename.format(*args, **kwargs)
