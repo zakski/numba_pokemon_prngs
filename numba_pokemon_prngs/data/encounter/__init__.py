@@ -427,7 +427,7 @@ SPAWNER_NAMES_LA = json.loads(
 )
 
 ENCOUNTER_TABLE_NAMES_LA = json.loads(
-    pkg_resources.read_text(encount.la, "spawner_names.json"),
+    pkg_resources.read_text(encount.la, "encounter_table_names.json"),
     object_hook=lambda x: {int(k): v for k,v in x.items()}
 )
 
